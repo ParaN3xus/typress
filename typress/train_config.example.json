@@ -1,0 +1,11 @@
+{
+    "model": "",
+    "dataset": {
+        "train": "",
+        "eval": ""
+    },
+    "params": {
+        "epoches": 1,
+        "learning_rate": 5e-5
+    }
+}
