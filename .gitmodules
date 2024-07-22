@@ -1,0 +1,4 @@
+[submodule "typress/dataset/eq_query_rec"]
+	path = typress/dataset/eq_query_rec
+	url = https://github.com/sjfhsjfh/eq_query_rec
+	branch = typress
