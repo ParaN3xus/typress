@@ -39,7 +39,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.command == "extract":
-        pass
+        from .eq_query_rec.main import eq_query_rec
+
+        eq_query_rec()
     elif args.command == "convert":
         pass
     elif args.command == "normalize":
