@@ -16,6 +16,15 @@ if __name__ == "__main__":
         "convert", description="Convert LaTeX formulas to Typst formulas"
     )
 
+    convert_parser.add_argument(
+        "-c",
+        "--csv",
+        dest="filename",
+        type=str,
+        help="csv file to process",
+        required=False,
+    )
+
     normalize_parser = subparsers.add_parser(
         "normalize", description="Normalize formulas"
     )
@@ -43,7 +52,22 @@ if __name__ == "__main__":
 
         eq_query_rec()
     elif args.command == "convert":
-        pass
+        import os
+        import subprocess
+
+        current_dir = os.path.dirname(__file__)
+        node_script_path = os.path.join(current_dir, "tex2typ", "index.js")
+
+        csv_file_name = args.filename
+        command = ["node", node_script_path, "csv", csv_file_name]
+
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, check=True)
+            print(result.stdout)
+        except subprocess.CalledProcessError as e:
+            print("Error calling Node.js script:")
+            print(e.stderr)
+
     elif args.command == "normalize":
         pass
     elif args.command == "filter":
