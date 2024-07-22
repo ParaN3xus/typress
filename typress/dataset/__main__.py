@@ -29,6 +29,15 @@ if __name__ == "__main__":
         "normalize", description="Normalize formulas"
     )
 
+    normalize_parser.add_argument(
+        "-c",
+        "--csv",
+        dest="filename",
+        type=str,
+        help="csv file to process",
+        required=False,
+    )
+
     filter_parser = subparsers.add_parser(
         "filter", description="Filter invalid formulas"
     )
@@ -48,7 +57,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.command == "extract":
-        from .eq_query_rec.main import eq_query_rec
+        from .eq_query_rec.eq_query_rec import eq_query_rec
 
         eq_query_rec()
     elif args.command == "convert":
@@ -69,7 +78,10 @@ if __name__ == "__main__":
             print(e.stderr)
 
     elif args.command == "normalize":
-        pass
+        from .eq_query_rec.normalize import normalize_csv_column
+
+        normalize_csv_column(args.filename)
+
     elif args.command == "filter":
         pass
     elif args.command == "genimg":
