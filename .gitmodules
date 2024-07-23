@@ -5,4 +5,3 @@
 [submodule "typress/dataset/tex2typ"]
 	path = typress/dataset/tex2typ
 	url = https://github.com/paran3xus/tex2typ
-	branch = main
