@@ -78,7 +78,11 @@ def index_html(api_root="http://127.0.0.1:5000/"):
                         body: formData
                     });
                     const data = await response.json();
-                    document.getElementById('result-text').textContent = data.formula || 'Failed to recognize the formula.';
+                    if ("formula" in data) {
+                        document.getElementById('result-text').textContent = data.formula;
+                    } else {
+                        document.getElementById('result-text').textContent = data.error || 'Invalid res json.';
+                    }
                 } catch (error) {
                     document.getElementById('result-text').textContent = 'An error occurred.';
                 }
