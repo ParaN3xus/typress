@@ -88,6 +88,24 @@ if __name__ == "__main__":
         "split", description="Split dataset to train and test"
     )
 
+    split_parser.add_argument(
+        "-c",
+        "--csv",
+        dest="csv",
+        type=str,
+        help="csv file to split",
+        required=True,
+    )
+
+    split_parser.add_argument(
+        "-s",
+        "--test_size",
+        dest="test_size",
+        type=float,
+        help="Test set size ratio",
+        required=True,
+    )
+
     args = parser.parse_args()
 
     if args.command == "extract":
@@ -129,4 +147,6 @@ if __name__ == "__main__":
 
         merge_csv(args.csv1, args.csv2)
     elif args.command == "split":
-        pass
+        from .tools import split_csv
+
+        split_csv(args.csv, args.test_size)
