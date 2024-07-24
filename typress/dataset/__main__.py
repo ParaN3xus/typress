@@ -53,6 +53,15 @@ if __name__ == "__main__":
         "genimg", description="Generate image for formulas"
     )
 
+    genimg_parser.add_argument(
+        "-j",
+        "--json",
+        dest="filename",
+        type=str,
+        help="json file to process",
+        required=False,
+    )
+
     merge_parser = subparsers.add_parser(
         "merge", description="Merge two datasets into one"
     )
@@ -92,9 +101,11 @@ if __name__ == "__main__":
     elif args.command == "filter":
         from .tools import filter_csv
 
-        filter_csv(args.csv)
+        filter_csv(args.filename)
     elif args.command == "genimg":
-        pass
+        from .genimg import genimg
+
+        genimg(args.filename)
     elif args.command == "merge":
         pass
     elif args.command == "split":
