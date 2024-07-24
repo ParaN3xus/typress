@@ -1,8 +1,9 @@
-import tqdm
+from tqdm import tqdm
 import torch
 import evaluate
 
 cer_metric = evaluate.load("cer")
+
 
 def compute_cer(pred_ids, label_ids, processor):
     pred_str = processor.batch_decode(pred_ids, skip_special_tokens=True)
@@ -13,6 +14,7 @@ def compute_cer(pred_ids, label_ids, processor):
 
     return cer
 
+
 def eval(model, processor, eval_dataloader, device):
     model.eval()
     valid_cer = 0.0
@@ -22,5 +24,9 @@ def eval(model, processor, eval_dataloader, device):
             outputs.to(device)
 
             # compute metrics
-            cer = compute_cer(pred_ids=outputs, label_ids=batch["labels"].to(device), processor)
+            cer = compute_cer(
+                pred_ids=outputs,
+                label_ids=batch["labels"].to(device),
+                processor=processor,
+            )
             valid_cer += cer
