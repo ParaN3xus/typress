@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
     subparsers = parser.add_subparsers(dest="command")
 
-    normalize_parser = subparsers.add_parser(
+    extract = subparsers.add_parser(
         "extract", description="Extract formulas from Typst workspace"
     )
 
