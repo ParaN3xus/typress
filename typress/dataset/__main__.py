@@ -38,8 +38,15 @@ if __name__ == "__main__":
         required=False,
     )
 
-    filter_parser = subparsers.add_parser(
-        "filter", description="Filter invalid formulas"
+    filter_parser = subparsers.add_parser("filter", description="Filter empty formulas")
+
+    filter_parser.add_argument(
+        "-c",
+        "--csv",
+        dest="filename",
+        type=str,
+        help="csv file to process",
+        required=False,
     )
 
     genimg_parser = subparsers.add_parser(
@@ -83,7 +90,9 @@ if __name__ == "__main__":
         normalize_csv_column(args.filename)
 
     elif args.command == "filter":
-        pass
+        from .tools import filter_csv
+
+        filter_csv(args.csv)
     elif args.command == "genimg":
         pass
     elif args.command == "merge":
