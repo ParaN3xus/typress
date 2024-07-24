@@ -71,7 +71,7 @@ def index_html(api_root):
 </head>
 <body>
     <div class="container">
-        <h1>Typress Formula OCR</h1>
+        <h1>Typress: Typst Math Expressions OCR</h1>
         <input type="file" id="file-input" accept="image/*">
         <div id="result" onclick="copyToClipboard()">
             <span id="copy-msg">Copied!</span>
@@ -90,6 +90,24 @@ def index_html(api_root):
         + """';
         let typstInitialized = false;
 
+        async function initializeTypst() {
+            if (!typstInitialized) {
+                $typst.setCompilerInitOptions({
+                    getModule: () =>
+                        'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm',
+                });
+                $typst.setRendererInitOptions({
+                    getModule: () =>
+                        'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm',
+                });
+                typstInitialized = true;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            initializeTypst();
+        });
+        
         document.getElementById('file-input').addEventListener('change', async (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -145,17 +163,7 @@ def index_html(api_root):
 
         async function renderFormula(formula) {
             try {
-                if (!typstInitialized) {
-                    $typst.setCompilerInitOptions({
-                        getModule: () =>
-                            'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm',
-                    });
-                    $typst.setRendererInitOptions({
-                        getModule: () =>
-                            'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm',
-                    });
-                    typstInitialized = true;
-                }
+                await initializeTypst();
 
                 const svg = await $typst.svg({ mainContent: 
 `#set page(width: auto, height: auto, margin: (x: 5pt, y: 5pt))
