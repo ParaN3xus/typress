@@ -19,11 +19,12 @@ def run_api(model_path, device, host, port):
             return jsonify({"error": "No image file provided"}), 400
 
         image = request.files["image"]
-        img = Image.open(image).convert("RGB")
+        img = Image.open(image.stream).convert("RGB")
         try:
-            pixel_values = processor(images=img, return_tensors="pt").pixel_values.to(
-                device
-            )
+            pixel_values = processor(
+                images=img,
+                return_tensors="pt"
+            ).pixel_values.to(device)
             generated_text = generate(model, processor, pixel_values)[0]
             return jsonify({"formula": generated_text})
         except Exception as e:
