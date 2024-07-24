@@ -3,6 +3,7 @@ from PIL import Image
 import torch
 from torch.utils.data import DataLoader
 import pandas
+import os
 
 
 class OCRDataset(Dataset):
@@ -45,14 +46,16 @@ class OCRDataset(Dataset):
         return encoding
 
 
-def get_dataset_df(path):
-    df = pandas.read_csv(f"{path}/dataset.csv", header=None)
+def get_dataset_df(csv_path):
+    df = pandas.read_csv(f"{csv_path}", header=None)
     df.rename(columns={0: "file_name", 1: "text"}, inplace=True)
     df = df.drop(index=0)
     return df.reset_index(drop=True)
 
 
-def get_dataloader(path, processor):
-    df = get_dataset_df(path)
-    dataset = OCRDataset(root_dir=f"{path}/img/", df=df, processor=processor)
+def get_dataloader(csv_path, processor):
+    df = get_dataset_df(csv_path)
+    dataset = OCRDataset(
+        root_dir=f"{os.path.dirname(csv_path)}/img/", df=df, processor=processor
+    )
     return DataLoader(dataset, batch_size=4, shuffle=True)
