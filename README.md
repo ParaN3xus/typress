@@ -35,9 +35,20 @@ python typress
 ### Production Run
 
 #### Set Up .env
-Install dependencies
+
+Create a .env file in the repo root directory with the following content:
+
 ```sh
-pip install -r requirements.txt
+MODEL_PATH=path/to/your/model
+API_ROOT_URL=https://api.example.com/typress
+```
+
+#### Run WSGI
+
+To run the application in production mode, it is recommended to use a production-grade WSGI server such as `gunicorn`:
+
+```sh
+gunicorn --bind 0.0.0.0:8000 wsgi:app
 ```
 
 ## TODO
