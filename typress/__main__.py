@@ -86,7 +86,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.command == "web":
-        from .app.api import run_api
+        from app.api import get_app
 
         if not args.__contains__("host"):
             args.host = "localhost"
@@ -96,8 +96,10 @@ if __name__ == "__main__":
             args.model = "paran3xus/typst_eq_ocr"
         if not args.__contains__("device"):
             args.device = "auto"
-        run_api(args.model, args.device, args.host, args.port)
+        get_app(
+            args.model, args.device, f"http://{args.host}:{args.port}"
+        ).run(args.host, args.port)
     if args.command == "cli":
-        from .app.model import generate_cli
+        from app.model import generate_cli
 
         generate_cli(args.model, args.image, args.continuous, args.device)

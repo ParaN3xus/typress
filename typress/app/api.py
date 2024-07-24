@@ -2,10 +2,10 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
 from .frontend import index_html
-from typress.app.model import load_model, generate, get_device
+from .model import load_model, generate, get_device
 
 
-def run_api(model_path, device, host, port):
+def get_app(model_path, device, api_root):
     app = Flask("Typress OCR")
     CORS(app)
 
@@ -32,6 +32,7 @@ def run_api(model_path, device, host, port):
 
     @app.route("/", methods=["GET"])
     def index():
-        return index_html(f"http://{host}:{port}")
+        return index_html(api_root)
 
-    app.run(host=host, port=port)
+    # app.run(host=host, port=port)
+    return app
