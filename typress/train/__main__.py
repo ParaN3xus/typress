@@ -16,13 +16,6 @@ if __name__ == "__main__":
 
     # train arguments
     train_parser.add_argument(
-        "--model",
-        "-m",
-        type=str,
-        help="Path to an existing model or to save the model",
-        required=True,
-    )
-    train_parser.add_argument(
         "--config",
         type=str,
         help="Path to the train config",
@@ -48,10 +41,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.command == "train":
-        from train.train import cli_train
+        from .train import cli_train
 
         cli_train(args.config)
     elif args.command == "tokenizer":
-        from train.train_tokenizer import train_tokenizer
+        from .train_tokenizer import train_tokenizer
 
-        train_tokenizer(args.dataset, args.vocab_size)
+        train_tokenizer(args.dataset, int(args.vocab_size))
