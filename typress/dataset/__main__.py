@@ -22,7 +22,7 @@ if __name__ == "__main__":
         dest="filename",
         type=str,
         help="csv file to process",
-        required=False,
+        required=True,
     )
 
     normalize_parser = subparsers.add_parser(
@@ -35,7 +35,7 @@ if __name__ == "__main__":
         dest="filename",
         type=str,
         help="csv file to process",
-        required=False,
+        required=True,
     )
 
     filter_parser = subparsers.add_parser("filter", description="Filter empty formulas")
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         dest="filename",
         type=str,
         help="csv file to process",
-        required=False,
+        required=True,
     )
 
     genimg_parser = subparsers.add_parser(
@@ -59,11 +59,29 @@ if __name__ == "__main__":
         dest="filename",
         type=str,
         help="json file to process",
-        required=False,
+        required=True,
     )
 
     merge_parser = subparsers.add_parser(
         "merge", description="Merge two datasets into one"
+    )
+
+    merge_parser.add_argument(
+        "-c1",
+        "--csv1",
+        dest="csv1",
+        type=str,
+        help="first csv file to merge",
+        required=True,
+    )
+
+    merge_parser.add_argument(
+        "-c2",
+        "--csv2",
+        dest="csv2",
+        type=str,
+        help="second csv file to merge",
+        required=True,
     )
 
     split_parser = subparsers.add_parser(
@@ -107,6 +125,8 @@ if __name__ == "__main__":
 
         genimg(args.filename)
     elif args.command == "merge":
-        pass
+        from .tools import merge_csv
+
+        merge_csv(args.csv1, args.csv2)
     elif args.command == "split":
         pass
