@@ -4,7 +4,8 @@ from PIL import Image
 
 def generate(model, processor, pixel_values):
     generated_ids = model.generate(pixel_values)
-    generated_texts = processor.batch_decode(generated_ids, skip_special_tokens=True)
+    generated_texts = processor.batch_decode(
+        generated_ids, skip_special_tokens=True)
     return generated_texts
 
 
@@ -17,7 +18,8 @@ def generate_cli(model_path, image_path, continuous):
 
         image_fps = [image_path]
         images = [Image.open(fp).convert("RGB") for fp in image_fps]
-        pixel_values = processor(images=images, return_tensors="pt").pixel_values
+        pixel_values = processor(
+            images=images, return_tensors="pt").pixel_values
         generated_text = generate(model, processor, pixel_values)
         [print(i) for i in generated_text]
 

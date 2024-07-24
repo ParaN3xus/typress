@@ -1,6 +1,13 @@
+# Environment
+.env
+
 # python
+__pycache__
 *.pyc
 .venv
+
+# Models
+fusion
 
 # temp dir
 tmp/
