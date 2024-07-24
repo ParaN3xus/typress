@@ -70,35 +70,12 @@ API_ROOT_URL=https://api.example.com/typress
 ```
 
 #### Run WSGI
-#### Run WSGI
 
 To run the application in production mode, it is recommended to use a production-grade WSGI server such as `gunicorn`:
 
 ```sh
 gunicorn --bind 0.0.0.0:8000 wsgi:app
 ```
-## TODO
-- [ ] Improve the tex2typ reconstruction strategy for `mat`, `delimsizing`, and `spacing`.
-- [ ] Fix memory leaks in normalized formulas
-- [ ] Add formula detection
-- [ ] Explore using LoRA to fine-tune the OCR model for TeX
-- [ ] Publish to PyPI
-- [ ] Document the complete dataset construction process
-- [ ] Train using `seq2seqtrainer`
-
-## Contributing
-
-### Data Contribution
-If you have a collection of Typst mathematical formula text (which can be included in Typst documents), you can create a dataset by running the following command in the Typst workspace root:
-
-```bash
-python -m typress.dataset extract
-```
-    
-Then, submit the generated `out.json` file to us via email at paran3xus007@gmail.com. By submitting your data to us, you agree to make your dataset publicly available.
-
-### Code Contribution
-We welcome any code contributions, including bug fixes, feature additions, etc. If you're unsure where to start, you can refer to our Todo list.
 ## TODO
 - [ ] Improve the tex2typ reconstruction strategy for `mat`, `delimsizing`, and `spacing`.
 - [ ] Fix memory leaks in normalized formulas
