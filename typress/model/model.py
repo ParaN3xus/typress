@@ -1,4 +1,9 @@
-from transformers import TrOCRProcessor, VisionEncoderDecoderModel
+from typing import Tuple
+from transformers import (
+    PreTrainedModel,
+    TrOCRProcessor,
+    VisionEncoderDecoderModel
+)
 from PIL import Image
 
 
@@ -27,10 +32,10 @@ def generate_cli(model_path, image_path, continuous):
             break
 
 
-def load_model(path):
+def load_model(path) -> Tuple[TrOCRProcessor, PreTrainedModel]:
     processor = TrOCRProcessor.from_pretrained(path)
     model = VisionEncoderDecoderModel.from_pretrained(path)
-    return model, processor
+    return model, processor  # type: ignore
 
 
 def save_model(path, model, processor):
