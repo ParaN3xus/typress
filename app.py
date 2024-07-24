@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 import os
 from PIL import Image
 from frontend import index_html
-from typress.model.model import load_model
+from typress.model.model import generate, load_model
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -25,7 +25,7 @@ def get_formula():
     try:
         pixel_values = processor(
             images=[img], return_tensors="pt").pixel_values
-        generated_text = generate_formula(model, processor, pixel_values)
+        generated_text = generate(model, processor, pixel_values)
         return jsonify({"formula": generated_text})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
