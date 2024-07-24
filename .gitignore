@@ -1,2 +1,5 @@
 # python cache
 *.pyc
+
+# temp dir
+tmp/
