@@ -8,7 +8,9 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(dest="command")
     parser.set_defaults(command="web")
 
-    parser.add_argument(
+    web_parser = subparsers.add_parser("web", description="Run api server")
+
+    web_parser.add_argument(
         "-m",
         "--model",
         dest="model",
@@ -17,7 +19,7 @@ if __name__ == "__main__":
         default="paran3xus/typst_eq_ocr",
     )
 
-    parser.add_argument(
+    web_parser.add_argument(
         "-d",
         "--device",
         dest="device",
@@ -25,8 +27,6 @@ if __name__ == "__main__":
         help="Device to run the model",
         default="auto",
     )
-
-    web_parser = subparsers.add_parser("web", description="Run api server")
 
     web_parser.add_argument(
         "--host",
@@ -46,6 +46,24 @@ if __name__ == "__main__":
     )
 
     cli_parser = subparsers.add_parser("cli", description="Run cli")
+
+    cli_parser.add_argument(
+        "-m",
+        "--model",
+        dest="model",
+        type=str,
+        help="Path to the model folder",
+        default="paran3xus/typst_eq_ocr",
+    )
+
+    cli_parser.add_argument(
+        "-d",
+        "--device",
+        dest="device",
+        type=str,
+        help="Device to run the model",
+        default="auto",
+    )
 
     cli_parser.add_argument(
         "-i",
@@ -70,10 +88,16 @@ if __name__ == "__main__":
     if args.command == "web":
         from .app.api import run_api
 
-        web_args = web_parser.parse_args()
-        run_api(args.model, args.device, web_args.host, web_args.port)
+        if not args.__contains__("host"):
+            args.host = "localhost"
+        if not args.__contains__("port"):
+            args.port = 5676
+        if not args.__contains__("model"):
+            args.model = "paran3xus/typst_eq_ocr"
+        if not args.__contains__("device"):
+            args.device = "auto"
+        run_api(args.model, args.device, args.host, args.port)
     if args.command == "cli":
         from .app.model import generate_cli
 
-        cli_args = cli_parser.parse_args()
-        generate_cli(args.model, cli_args.image, cli_args.continuous, args.device)
+        generate_cli(args.model, args.image, args.continuous, args.device)
