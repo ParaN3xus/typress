@@ -1,10 +1,7 @@
 # Typress
 
 Typst Mathematical Expression OCR based on [TrOCR](https://github.com/microsoft/unilm/tree/master/trocr).
-Typst Mathematical Expression OCR based on [TrOCR](https://github.com/microsoft/unilm/tree/master/trocr).
 
-## Install
-#### Clone the Repository
 ## Install
 #### Clone the Repository
 
@@ -43,39 +40,6 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
-#### TODO: PyPI
-
-## Run
-
-### Development Run
-
-
-
-#### Run Typress Web server
-Ensure you are in the repo root directory and execute
-
-```sh
-python typress
-```
-
-### Production Run
-
-#### Set Up .env
-
-Create a .env file in the repo root directory with the following content:
-
-```sh
-MODEL_PATH=path/to/your/model
-API_ROOT_URL=https://api.example.com/typress
-```
-
-#### Run WSGI
-
-To run the application in production mode, it is recommended to use a production-grade WSGI server such as `gunicorn`:
-
-```sh
-gunicorn --bind 0.0.0.0:8000 wsgi:app
-```
 ## TODO
 - [ ] Improve the tex2typ reconstruction strategy for `mat`, `delimsizing`, and `spacing`.
 - [ ] Fix memory leaks in normalized formulas
