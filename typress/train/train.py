@@ -2,7 +2,7 @@ import tqdm
 import torch
 from .eval import eval
 from .dataset import get_dataloader
-from ..model.model import save_model, load_model
+from ..app.model import save_model, load_model
 
 
 def train(model, train_dataloader, optimizer, device):
