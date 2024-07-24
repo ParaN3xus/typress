@@ -1,5 +1,6 @@
-# python cache
+# python
 *.pyc
+.venv
 
 # temp dir
 tmp/
