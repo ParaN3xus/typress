@@ -17,6 +17,8 @@ if __name__ == "__main__":
     # train arguments
     train_parser.add_argument(
         "--config",
+        "-c",
+        dest="config",
         type=str,
         help="Path to the train config",
         required=True,
@@ -24,17 +26,19 @@ if __name__ == "__main__":
 
     # tokenizer arguments
     tokenizer_parser.add_argument(
-        "--dataset",
-        "-d",
+        "--csv",
+        "-c",
+        dest="csv",
         type=str,
-        help="Path to the dataset",
+        help="Path to the csv file",
         required=True,
     )
     tokenizer_parser.add_argument(
         "--vocab_size",
         "-v",
-        type=str,
-        help="Path to the dataset",
+        dest="vocab_size",
+        type=int,
+        help="Vocab size",
         required=True,
     )
 
@@ -47,4 +51,4 @@ if __name__ == "__main__":
     elif args.command == "tokenizer":
         from .train_tokenizer import train_tokenizer
 
-        train_tokenizer(args.dataset, int(args.vocab_size))
+        train_tokenizer(args.csv, args.vocab_size)

@@ -1,11 +1,12 @@
 from tokenizers import Tokenizer, models, pre_tokenizers, decoders, trainers, processors
 from .dataset import get_dataset_df
-import tqdm
+from tqdm import tqdm
+import os
 
 
-def train_tokenizer(dataset_path, vocab_size):
-    df = get_dataset_df(dataset_path)
-    texts = df["text"].tolist()
+def train_tokenizer(csv_path, vocab_size):
+    df = get_dataset_df(csv_path)
+    texts = [str(text) for text in texts]
     texts = tqdm(texts)
 
     tokenizer = Tokenizer(models.BPE())
@@ -73,5 +74,5 @@ def train_tokenizer(dataset_path, vocab_size):
     tokenizer.train_from_iterator(texts, trainer)
     tokenizer.decoder = decoders.ByteLevel(add_prefix_space=True)
 
-    tokenizer.save(f"${dataset_path}/tokenizer/tokenizer.json")
-    print(f"Tokenizer saved to f{dataset_path}/tokenizer/tokenizer.json")
+    tokenizer.save(f"{os.path.dirname(csv_path)}/tokenizer/tokenizer.json")
+    print(f"Tokenizer saved to {os.path.dirname(csv_path)}/tokenizer/tokenizer.json")
