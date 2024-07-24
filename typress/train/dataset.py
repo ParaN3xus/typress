@@ -50,6 +50,7 @@ def get_dataset_df(csv_path):
     df = pandas.read_csv(f"{csv_path}", header=None)
     df.rename(columns={0: "file_name", 1: "text"}, inplace=True)
     df = df.drop(index=0)
+    df["text"] = df["text"].astype(str)
     return df.reset_index(drop=True)
 
 
