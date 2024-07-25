@@ -86,7 +86,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.command == "web":
-        from app.api import get_app
+        from .app.api import get_app
 
         if not args.__contains__("host"):
             args.host = "localhost"
@@ -100,6 +100,6 @@ if __name__ == "__main__":
             args.host, args.port, debug=True
         )
     if args.command == "cli":
-        from app.model import generate_cli
+        from .app.model import generate_cli
 
         generate_cli(args.model, args.image, args.continuous, args.device)
