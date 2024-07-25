@@ -16,7 +16,7 @@ if __name__ == "__main__":
         dest="model",
         type=str,
         help="Path to the model folder",
-        default="paran3xus/typst_eq_ocr",
+        default="paran3xus/typress_ocr",
     )
 
     web_parser.add_argument(
@@ -53,7 +53,7 @@ if __name__ == "__main__":
         dest="model",
         type=str,
         help="Path to the model folder",
-        default="paran3xus/typst_eq_ocr",
+        default="paran3xus/typress_ocr",
     )
 
     cli_parser.add_argument(
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         if not args.__contains__("port"):
             args.port = 5676
         if not args.__contains__("model"):
-            args.model = "paran3xus/typst_eq_ocr"
+            args.model = "paran3xus/typress_ocr"
         if not args.__contains__("device"):
             args.device = "auto"
         get_app(args.model, args.device, f"http://{args.host}:{args.port}").run(
