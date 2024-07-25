@@ -1,5 +1,10 @@
 # Typress
 
+[![Open Source License](https://img.shields.io/github/license/paran3xus/typress?logo=github)](https://opensource.org/license/mit)
+[![Hugging Face Weights](https://img.shields.io/badge/Weights-TypressOCR-yellow.svg?logo=huggingface)](https://huggingface.co/paran3xus/typress_ocr)
+[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/paran3xus/typress_ocr_space)
+
+
 Typst Mathematical Expression OCR based on [TrOCR](https://github.com/microsoft/unilm/tree/master/trocr).
 
 ## Install
