@@ -8,7 +8,7 @@
 Typst Mathematical Expression OCR based on [TrOCR](https://github.com/microsoft/unilm/tree/master/trocr).
 
 ## Install
-#### Clone the Repository
+### Clone the Repository
 
 Clone this repo and enter it:
 
@@ -22,7 +22,7 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
-#### TODO: PyPI
+### TODO: PyPI
 
 ## Run
 
