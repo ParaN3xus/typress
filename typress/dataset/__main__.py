@@ -139,7 +139,7 @@ if __name__ == "__main__":
 
         filter_csv(args.filename)
     elif args.command == "genimg":
-        from .genimg import genimg
+        from .genimg.genimg import genimg
 
         genimg(args.filename)
     elif args.command == "merge":

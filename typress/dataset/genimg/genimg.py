@@ -7,6 +7,8 @@ import subprocess
 import csv
 import concurrent.futures
 from threading import Lock
+from .img_augment import augment_image_file
+import random
 
 TEMP_PATH = None
 IMG_PATH = None
@@ -52,7 +54,18 @@ def gen_name(eq) -> str:
 
 def gen_typ(eq):
     # TODO: maybe add some import? not sure
-    return f"""#set page(width: auto, height: auto, margin: 6pt)\n$ {eq} $"""
+    math_fonts = [
+        "Asana Math",
+        "Cambria Math",
+        "DejaVu Math TeX Gyre",
+        "New Computer Modern Math",
+        "Noto Sans Math",
+        "XITS Math",
+    ]
+
+    font = random.choice(math_fonts)
+    size = random.uniform(12, 16)
+    return f"""#set page(width: auto, height: auto, margin: 6pt)\n#show math.equation: set text(font: "{font}", size: {size}pt)\n$ {eq} $"""
 
 
 def gen_img(equation: str) -> str:
@@ -82,6 +95,8 @@ def gen_img(equation: str) -> str:
     input_fn.unlink()
     if not ok:
         raise ValueError(f"Failed to compile {equation}")
+
+    augment_image_file(output_fn(ppi))
     return name
 
 
