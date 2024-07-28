@@ -66,7 +66,7 @@ def cli_train(config_path):
     save_path = config["model"]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model, processor = load_model(model_path)
+    model, processor = load_model(model_path, device)
     model.to(device)
 
     train_dataloader = get_dataloader(train_data_path, processor)
