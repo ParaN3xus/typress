@@ -1,4 +1,4 @@
-import tqdm
+from tqdm import tqdm
 import torch
 from .eval import eval
 from .dataset import get_dataloader
