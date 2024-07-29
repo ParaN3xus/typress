@@ -4,10 +4,10 @@
 [![Hugging Face Weights](https://img.shields.io/badge/Weights-TypressOCR-yellow.svg?logo=huggingface)](https://huggingface.co/paran3xus/typress_ocr)
 [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/paran3xus/typress_ocr_space)
 
-
 Typst Mathematical Expression OCR based on [TrOCR](https://github.com/microsoft/unilm/tree/master/trocr).
 
 ## Install
+
 ### Clone the Repository
 
 Clone this repo and enter it:
@@ -20,6 +20,7 @@ cd typress
 Install dependencies:
 
 We use [Poetry](https://python-poetry.org/) to manage project dependencies. If you don't have Poetry installed, please follow the instructions on the [Poetry installation page](https://python-poetry.org/docs/).
+
 ```sh
 poetry install
 poetry shell
@@ -32,6 +33,7 @@ poetry shell
 ### Development Run
 
 #### Run Typress Web server
+
 Ensure you are in the repo root directory and execute
 
 ```sh
@@ -58,6 +60,7 @@ gunicorn --bind 0.0.0.0:8000 wsgi:app
 ```
 
 ## TODO
+
 - [ ] Improve the tex2typ reconstruction strategy for `mat`, `delimsizing`, and `spacing`.
 - [ ] Fix memory leaks in normalized formulas
 - [ ] Add formula detection
@@ -69,21 +72,22 @@ gunicorn --bind 0.0.0.0:8000 wsgi:app
 ## Contributing
 
 ### Data Contribution
+
 If you have a collection of Typst mathematical formula text (which can be included in Typst documents), you can create a dataset by running the following command in the Typst workspace root:
 
 ```bash
 python -m typress.dataset extract
 ```
-    
-Then, submit the generated `out.json` file to us via email at paran3xus007@gmail.com. By submitting your data to us, you agree to make your dataset publicly available.
+
+Then, submit the generated `out.json` file to us via email at [paran3xus007@gmail.com](mailto:paran3xus007@gmail.com). By submitting your data to us, you agree to make your dataset publicly available.
 
 ### Code Contribution
+
 We welcome any code contributions, including bug fixes, feature additions, etc. If you're unsure where to start, you can refer to our Todo list.
 
 ## License
 
 This repository is published under an MIT License. See [LICENSE](https://github.com/ParaN3xus/typress/blob/main/LICENSE) file
-
 
 ## Credits
 
@@ -99,4 +103,4 @@ This project makes use of the following open-source projects or datasets:
 
 Thanks to the developers and contributors of these projects for their hard work and dedication.
 
-Thanks to @sjfhsjfh, @Naptie, @mivik for providing Typst mathematical formula data.
+Thanks to [sjfhsjfh](https://github.com/sjfhsjfh), [Naptie](https://github.com/Naptie), [Mivik](https://github.com/Mivik/) for providing Typst mathematical formula data.
