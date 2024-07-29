@@ -1,9 +1,5 @@
 from typing import Tuple
-from transformers import (
-    PreTrainedModel,
-    TrOCRProcessor,
-    VisionEncoderDecoderModel
-)
+from transformers import PreTrainedModel, TrOCRProcessor, VisionEncoderDecoderModel
 from PIL import Image
 
 
@@ -16,8 +12,6 @@ def get_device(device_name):
             device = torch.device("cuda:0")
         elif torch.backends.mps.is_available():
             device = torch.device("mps")
-        elif torch.backends.opencl.is_available():  # type: ignore
-            device = torch.device("opencl:0")
         else:
             device = torch.device("cpu")
     else:
@@ -27,10 +21,8 @@ def get_device(device_name):
 
 
 def generate(model, processor, pixel_values):
-    generated_ids = model.generate(
-        pixel_values.to(next(model.parameters()).device))
-    generated_texts = processor.batch_decode(
-        generated_ids, skip_special_tokens=True)
+    generated_ids = model.generate(pixel_values.to(next(model.parameters()).device))
+    generated_texts = processor.batch_decode(generated_ids, skip_special_tokens=True)
     return generated_texts
 
 
