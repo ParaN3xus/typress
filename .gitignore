@@ -5,6 +5,7 @@
 __pycache__
 *.pyc
 .venv
+poetry.lock
 
 # Models
 fusion
