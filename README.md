@@ -17,9 +17,12 @@ git clone https://github.com/ParaN3xus/typress
 cd typress
 ```
 
-Install dependencies
+Install dependencies:
+
+We use [Poetry](https://python-poetry.org/) to manage project dependencies. If you don't have Poetry installed, please follow the instructions on the [Poetry installation page](https://python-poetry.org/docs/).
 ```sh
-pip install -r requirements.txt
+poetry install
+poetry shell
 ```
 
 ### TODO: PyPI
@@ -28,13 +31,11 @@ pip install -r requirements.txt
 
 ### Development Run
 
-
-
 #### Run Typress Web server
 Ensure you are in the repo root directory and execute
 
 ```sh
-python typress
+python -m typress
 ```
 
 ### Production Run
