@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "typress"
+version = "0.1.0"
+description = "Typst Equation OCR"
+authors = ["ParaN3xus <paran3xus007@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+evaluate = "^0.4.2"
+Flask = "^3.0.3"
+Flask-Cors = "^4.0.1"
+pandas = "^2.2.2"
+pillow = "^10.4.0"
+tokenizers = "^0.19.1"
+torch = "^2.4.0"
+tqdm = "^4.66.4"
+transformers = "^4.43.3"
+typst = "^0.11.1"
+jiwer = "^3.0.4"
+opencv-python = "^4.10.0.84"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
