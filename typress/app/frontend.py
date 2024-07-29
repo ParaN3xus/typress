@@ -26,9 +26,30 @@ def index_html(api_root):
             text-align: center;
             margin-bottom: 20px;
         }
-        input[type="file"] {
-            display: block;
+        .file-feedback-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin: 20px auto;
+        }
+        .file-feedback-container div {
+            flex: 1;
+            text-align: center;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .file-label, #feedback-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .file-label:hover, #feedback-button:hover {
+            background-color: #0056b3;
         }
         .image-container {
             display: flex;
@@ -67,12 +88,78 @@ def index_html(api_root):
             color: red;
             text-align: center;
         }
+        #feedback-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1000;
+        }
+        #feedback-popup label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        #feedback-popup input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        #feedback-popup button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #feedback-popup button:hover {
+            background-color: #218838;
+        }
+        #close-popup {
+            margin: 10px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        #close-popup:hover {
+            background-color: #c82333;
+        }
+        #success-message {
+            display: none;
+            color: green;
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Typress: Typst Math Expressions OCR</h1>
-        <input type="file" id="file-input" accept="image/*">
+        <div class="file-feedback-container">
+            <div>
+                <label for="file-input" class="file-label">Choose File</label>
+                <input type="file" id="file-input" accept="image/*">
+            </div>
+            <div>
+                <button id="feedback-button">Report Recognition Error</button>
+            </div>
+        </div>
+        <div id="feedback-popup">
+            <button id="close-popup">Close</button>
+            <label><input type="checkbox" id="handwritten-checkbox"> Is this image handwritten?</label>
+            <button id="submit-feedback">Submit</button>
+            <p>By pressing the "Submit" button, you agree to have your image uploaded to our server, used for training data, and publicly shared.<br>Thank you for your support!</p>
+        </div>
+        <div id="success-message">Feedback successfully submitted!</div>
         <div id="result" onclick="copyToClipboard()">
             <span id="copy-msg">Copied!</span>
             <p id="result-text">Upload or paste an image to see the result here...</p>
@@ -89,6 +176,7 @@ def index_html(api_root):
         + api_root
         + """';
         let typstInitialized = false;
+        let currentFile = null;
 
         async function initializeTypst() {
             if (!typstInitialized) {
@@ -111,6 +199,7 @@ def index_html(api_root):
         document.getElementById('file-input').addEventListener('change', async (event) => {
             const file = event.target.files[0];
             if (file) {
+                currentFile = file;
                 displayImage(file);
                 await recognizeImage(file);
             }
@@ -122,11 +211,25 @@ def index_html(api_root):
                 if (items[i].type.indexOf('image') !== -1) {
                     const file = items[i].getAsFile();
                     if (file) {
+                        currentFile = file;
                         displayImage(file);
                         await recognizeImage(file);
                     }
                 }
             }
+        });
+
+        document.getElementById('feedback-button').addEventListener('click', () => {
+            document.getElementById('feedback-popup').style.display = 'block';
+        });
+
+        document.getElementById('close-popup').addEventListener('click', () => {
+            document.getElementById('feedback-popup').style.display = 'none';
+        });
+
+        document.getElementById('submit-feedback').addEventListener('click', async () => {
+            const isHandwritten = document.getElementById('handwritten-checkbox').checked;
+            await sendFeedback(currentFile, isHandwritten);
         });
 
         function displayImage(file) {
@@ -178,6 +281,30 @@ $ ${formula} $`
                 adjustLayout();
             } catch (error) {
                 showError(`Error rendering formula: ${error}`);
+            }
+        }
+
+        async function sendFeedback(file, isHandwritten) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('is_handwritten', isHandwritten);
+
+            try {
+                const response = await fetch('https://typress-feedback.xn--xkrsa0ti6rf4cf98d.com/send_formula_feedback', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.status === 200) {
+                    document.getElementById('feedback-popup').style.display = 'none';
+                    document.getElementById('success-message').style.display = 'block';
+                    setTimeout(() => {
+                        document.getElementById('success-message').style.display = 'none';
+                    }, 3000);
+                } else {
+                    showError('Failed to submit feedback.');
+                }
+            } catch (error) {
+                showError('An error occurred while submitting feedback.');
             }
         }
 
