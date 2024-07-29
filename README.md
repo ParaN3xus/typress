@@ -61,13 +61,13 @@ gunicorn --bind 0.0.0.0:8000 wsgi:app
 
 ## TODO
 
-- [ ] Improve the tex2typ reconstruction strategy for `mat`, `delimsizing`, and `spacing`.
+- [ ] Improve the tex2typ reconstruction strategy for `spacing`.
 - [ ] Fix memory leaks in normalized formulas
 - [ ] Add formula detection
 - [ ] Explore using LoRA to fine-tune the OCR model for TeX
 - [ ] Publish to PyPI
 - [ ] Document the complete dataset construction process
-- [ ] Train using `seq2seqtrainer`
+- [ ] ~~Train using `seq2seqtrainer`~~
 
 ## Contributing
 
