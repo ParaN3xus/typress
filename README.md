@@ -36,6 +36,7 @@ Ensure you are in the repo root directory and execute
 
 ```sh
 python -m typress
+python -m typress
 ```
 
 ### Production Run
