@@ -22,6 +22,8 @@ jiwer = "^3.0.4"
 opencv-python = "^4.10.0.84"
 python-dotenv = "^1.0.1"
 
+[tool.poetry.scripts]
+typress = "typress.__main__:main"
 
 [build-system]
 requires = ["poetry-core"]
