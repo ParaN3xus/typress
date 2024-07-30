@@ -260,7 +260,7 @@ def index_html(api_root):
                     showError(data.error || 'Invalid response from server.');
                 }
             } catch (error) {
-                showError('An error occurred.');
+                showError(`An error occurred: ${error}`);
             }
         }
 
@@ -304,7 +304,7 @@ $ ${formula} $`
                     showError('Failed to submit feedback.');
                 }
             } catch (error) {
-                showError('An error occurred while submitting feedback.');
+                showError(`An error occurred while submitting feedback: ${error}`);
             }
         }
 
