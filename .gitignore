@@ -12,3 +12,35 @@ fusion
 
 # temp dir
 tmp/
+
+# frontend
+# Logs
+typress/app/frontend/logs
+typress/app/frontend/*.log
+typress/app/frontend/npm-debug.log*
+typress/app/frontend/yarn-debug.log*
+typress/app/frontend/yarn-error.log*
+typress/app/frontend/pnpm-debug.log*
+typress/app/frontend/lerna-debug.log*
+
+typress/app/frontend/node_modules
+typress/app/frontend/.DS_Store
+typress/app/frontend/dist
+typress/app/frontend/dist-ssr
+typress/app/frontend/coverage
+typress/app/frontend/*.local
+
+typress/app/frontend/cypress/videos/
+typress/app/frontend/cypress/screenshots/
+
+# Editor directories and files
+typress/app/frontend/.vscode/*
+typress/app/frontend/!.vscode/extensions.json
+typress/app/frontend/.idea
+typress/app/frontend/*.suo
+typress/app/frontend/*.ntvs*
+typress/app/frontend/*.njsproj
+typress/app/frontend/*.sln
+typress/app/frontend/*.sw?
+
+typress/app/frontend/*.tsbuildinfo
