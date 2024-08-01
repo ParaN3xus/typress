@@ -1,9 +1,13 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/solid';
 
-const isHandwritten = ref(false);
+const emit = defineEmits(['submit']);
+const props = defineProps({
+  isLoading: Boolean,
+});
 
+const isHandwritten = ref(false);
 const submitFeedback = () => {
   emit('submit', isHandwritten.value);
 };
@@ -28,7 +32,10 @@ const submitFeedback = () => {
       </p>
       <p class="text-base mb-4 text-gray-600">Thank you for your support!</p>
       <div class="flex justify-end">
-        <button class="btn btn-primary" @click="submitFeedback">Submit</button>
+        <button class="btn btn-primary" @click="submitFeedback" :disabled="isLoading">
+          <span v-if="props.isLoading" class="loading loading-spinner loading-sm"></span>
+          <span v-else>Submit</span>
+        </button>
       </div>
     </div>
   </div>

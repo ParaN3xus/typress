@@ -8,7 +8,8 @@ import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline';
 
 const toast = useToast();
 
-const API_ROOT = window.API_ROOT || window.location.origin;
+const API_ROOT = "http://localhost:5676";
+//const API_ROOT = window.API_ROOT || window.location.origin;
 
 
 const formula = ref(undefined);
@@ -19,6 +20,7 @@ const renderedSvg = ref('');
 const isTypstInitialized = ref(false);
 const isRendering = ref(false);
 const showFeedbackTooltip = ref(false);
+const isSubmittingFeedback = ref(false);
 
 const currentHour = new Date().getHours();
 const darkMode = ref(currentHour >= 19 || currentHour < 7);
@@ -138,6 +140,8 @@ const handleFileUpload = async (file) => {
 };
 
 const submitFeedback = async (isHandwritten) => {
+  isSubmittingFeedback.value = true;
+
   const formData = new FormData();
   formData.append('file', uploadedImageFile.value);
   formData.append('is_handwritten', isHandwritten);
@@ -156,6 +160,8 @@ const submitFeedback = async (isHandwritten) => {
     }
   } catch (error) {
     toast.error(`An error occurred while submitting feedback: ${error}`);
+  } finally {
+    isSubmittingFeedback.value = false;
   }
 };
 
@@ -232,7 +238,8 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-        <FeedbackPopup v-if="showFeedback" @close="showFeedback = false" @submit="submitFeedback" />
+        <FeedbackPopup v-if="showFeedback" :is-loading="isSubmittingFeedback" @close="showFeedback = false"
+          @submit="submitFeedback" />
       </div>
     </div>
   </div>
