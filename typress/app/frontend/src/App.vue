@@ -8,8 +8,8 @@ import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline';
 
 const toast = useToast();
 
-//const API_ROOT = import.meta.env.VITE_API_ROOT;
-const API_ROOT = 'http://localhost:5676'; // Replace with actual API root
+const API_ROOT = window.API_ROOT || window.location.origin;
+
 
 const formula = ref(undefined);
 const showFeedback = ref(false);
@@ -17,8 +17,8 @@ const uploadedImageUrl = ref('');
 const uploadedImageFile = ref(null); // Store the uploaded image file
 const renderedSvg = ref('');
 const isTypstInitialized = ref(false);
-const darkMode = ref(false); // Add darkMode ref
-const isRendering = ref(false); // Add loading state
+const darkMode = ref(false);
+const isRendering = ref(false);
 const showFeedbackTooltip = ref(false);
 
 const initializeTypst = () => {
