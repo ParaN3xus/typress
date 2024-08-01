@@ -15,7 +15,7 @@ const submitFeedback = () => {
       <h2 class="text-xl font-bold mb-4 text-primary">Feedback</h2>
       <button id="close-popup" class="btn btn-square absolute top-4 right-4 bg-transparent hover:bg-red-500 group"
         @click="$emit('close')">
-        <XMarkIcon class="h-6 w-6 text-red-500 group-hover:text-white" />
+        <XMarkIcon class="h-6 w-6 fill-red-500 group-hover:fill-white" />
       </button>
 
       <label class="flex items-center mb-4 text-gray-700">
