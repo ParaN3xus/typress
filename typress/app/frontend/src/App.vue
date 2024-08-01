@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watchEffect, nextTick, watch } from 'vue';
+import { ref, onMounted, watchPostEffect, nextTick, watch } from 'vue';
 import { useToast } from 'vue-toastification';
 import FormulaResult from './components/FormulaResult.vue';
 import FeedbackPopup from './components/FeedbackPopup.vue';
@@ -43,7 +43,6 @@ const initializeTypst = () => {
     }
   });
 };
-
 const renderFormula = async () => {
   if (!isTypstInitialized.value || !formula.value) {
     return;
@@ -75,6 +74,25 @@ const renderFormula = async () => {
     isRendering.value = false; // Move loading state here
   }
 };
+
+// Function to update SVG colors based on the theme
+const updateSvgTheme = (svgElement, mode) => {
+  const themeColor = mode ? "#ffffff" : "#000000";
+  svgElement.querySelectorAll("*").forEach((element) => {
+    element.setAttribute("fill", themeColor);
+    element.setAttribute("stroke", themeColor);
+  });
+};
+
+// Watch for changes in darkMode and update the SVG theme
+watchPostEffect(() => {
+  const svgContainer = document.querySelector(".rendered-svg-container svg");
+  console.log(1)
+  if (svgContainer) {
+    updateSvgTheme(svgContainer, darkMode.value);
+  }
+});
+
 
 watch([isTypstInitialized, formula], renderFormula);
 
@@ -197,7 +215,7 @@ onMounted(async () => {
           <div class="rendered-svg-container tooltip tooltip-bottom" data-tip="Click to report recognize error"
             @click="showFeedback = true">
             <span v-if="isRendering" class="loading loading-spinner loading-lg"></span>
-            <div v-else-if="renderedSvg" v-html="renderedSvg" class="rendered-svg ml-4"></div>
+            <div v-else-if="renderedSvg" v-html="renderedSvg" class=" rendered-svg-containerml-4"></div>
             <div v-else class="svg-placeholder ml-4">SVG will be rendered here</div>
           </div>
         </div>
@@ -209,6 +227,21 @@ onMounted(async () => {
 
 
 <style scoped>
+.rendered-svg-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: auto;
+}
+
+.rendered-svg-container svg {
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  /* Prevents SVG from intercepting clicks */
+}
+
+
 .rendered-svg-container,
 .uploaded-img-container {
   flex: 1 1 0;
