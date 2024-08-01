@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watchPostEffect, nextTick, watch } from 'vue';
+import { ref, onMounted, watchEffect, watchPostEffect, nextTick, watch } from 'vue';
 import { useToast } from 'vue-toastification';
 import FormulaResult from './components/FormulaResult.vue';
 import FeedbackPopup from './components/FeedbackPopup.vue';
@@ -8,7 +8,8 @@ import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline';
 
 const toast = useToast();
 
-const API_ROOT = 'http://localhost:5676'; // Replace with actual API root
+const API_ROOT = import.meta.env.VITE_API_ROOT;
+// const API_ROOT = 'http://localhost:5676'; // Replace with actual API root
 
 const formula = ref('');
 const showFeedback = ref(false);
