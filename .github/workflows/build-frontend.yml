@@ -34,7 +34,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           cd typress/app/frontend
-          git add dist/*
+          git add dist/* -f
           git commit -m "bot: Build and commit frontend dist files"
           git push
         env:
