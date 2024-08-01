@@ -22,6 +22,12 @@ pnpm install
 pnpm dev
 ```
 
+Notice: to set the API root for calculation, use
+
+```sh
+VITE_API_ROOT=http://localhost:8787 pnpm dev
+```
+
 ### Compile and Minify for Production
 
 ```sh
