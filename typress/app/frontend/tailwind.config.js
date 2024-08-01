@@ -1,0 +1,23 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      boxShadow: {
+        'inner-strong': 'inset 1px 2px 6px 1px rgba(0, 0, 0, 0.1)',
+        'offset': '-3px 6px 20px 1px rgba(0, 0, 0, 0.2)'
+
+      },
+    },
+  },
+  plugins: [
+    require('daisyui')
+  ],
+  daisyui: {
+    themes: ["light", "dark"],
+  },
+}
+
