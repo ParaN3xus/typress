@@ -65,14 +65,15 @@ def cli_train(config_path):
     learning_rate = config["params"]["learning_rate"]
     train_batch_size = config["params"]["train_batch_size"]
     eval_batch_size = config["params"]["eval_batch_size"]
+    dataloader_num_workers = config["params"]["dataloader_num_workers"]
     save_path = config["model"]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model, processor = load_model(model_path, device)
     model.to(device)
 
-    train_dataloader = get_dataloader(train_data_path, train_batch_size, processor)
-    eval_dataloader = get_dataloader(eval_data_path, eval_batch_size, processor)
+    train_dataloader = get_dataloader(train_data_path, train_batch_size, dataloader_num_workers, processor)
+    eval_dataloader = get_dataloader(eval_data_path, eval_batch_size, dataloader_num_workers, processor)
 
     train_and_eval(
         model,
