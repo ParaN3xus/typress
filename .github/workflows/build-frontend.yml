@@ -1,9 +1,14 @@
 name: Build Frontend and Commit
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - main
+    paths:
+      - 'typress/app/frontend/**'       
+  pull_request:
+    paths:
+      - 'typress/app/frontend/**'       
+
 
 jobs:
   build:
