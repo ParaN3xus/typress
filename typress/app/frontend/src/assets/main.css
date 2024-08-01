@@ -1,13 +1,10 @@
-@import './base.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 #app {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0rem;
   font-weight: normal;
 }
 
@@ -25,15 +22,14 @@ a,
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 500px) {
   body {
-    display: flex;
     place-items: center;
   }
 
   #app {
     display: grid;
-    padding: 0 2rem;
+    padding: 0 0rem;
   }
 }
 
@@ -64,29 +60,6 @@ a,
   }
 }
 
-$trans-cubic-bezier: cubic-bezier(0.215, 0.61, 0.355, 1);
-
-@keyframes fadeOutRight {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(50px);
-    opacity: 0;
-  }
-}
-
-@keyframes fadeInRight {
-  0% {
-    transform: translateX(50px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
 
 .custom-toast-enter-active {
   animation-name: fadeInRight;
