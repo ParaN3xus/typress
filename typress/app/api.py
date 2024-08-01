@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from PIL import Image
-from .frontend import index_html
 from .model import load_model, generate, get_device
 import os
 
