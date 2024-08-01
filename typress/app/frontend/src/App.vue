@@ -215,7 +215,7 @@ onMounted(async () => {
           <Shields />
         </div>
         <FormulaResult :formula="formula" class="w-full text-left" />
-        <div class="image-container flex justify-center items-stretch w-full gap-16 mt-4">
+        <div class="image-container flex justify-center items-stretch w-full gap-4 mt-4">
           <div class="uploaded-img-container flex-1 tooltip tooltip-bottom" data-tip="Click or Paste to upload"
             @click="handleImageClick">
             <input type="file" ref="fileInputRef" class="hidden" @change="handleFileChange" accept="image/*" />
