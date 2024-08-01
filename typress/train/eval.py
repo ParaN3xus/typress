@@ -20,7 +20,7 @@ def eval(model, processor, eval_dataloader, device):
     valid_cer = 0.0
     with torch.no_grad():
         for batch in tqdm(eval_dataloader):
-            outputs = model.generate(batch["pixel_values"].to(device))
+            outputs = model.module.generate(batch["pixel_values"].to(device))
             outputs.to(device)
 
             # compute metrics
@@ -30,3 +30,5 @@ def eval(model, processor, eval_dataloader, device):
                 processor=processor,
             )
             valid_cer += cer
+
+    return valid_cer

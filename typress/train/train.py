@@ -18,6 +18,7 @@ def train(model, train_dataloader, optimizer, device):
         # forward + backward + optimize
         outputs = model(**batch)
         loss = outputs.loss
+        loss = loss.mean()
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
@@ -40,12 +41,13 @@ def train_and_eval(
     device,
 ):
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+    model = torch.nn.DataParallel(model)
 
     for epoch in range(epoches):
         train_loss = train(model, train_dataloader, optimizer, device)
         valid_cer = eval(model, processor, eval_dataloader, device)
 
-        save_model(f"{save_path}/epoch_{epoch}/", model, processor)
+        save_model(f"{save_path}/epoch_{epoch}/", model.module, processor)
 
         print(f"Loss after epoch {epoch}:", train_loss / len(train_dataloader))
         print("Validation CER:", valid_cer / len(eval_dataloader))
@@ -70,7 +72,6 @@ def cli_train(config_path):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model, processor = load_model(model_path, device)
-    model.to(device)
 
     train_dataloader = get_dataloader(train_data_path, train_batch_size, dataloader_num_workers, processor)
     eval_dataloader = get_dataloader(eval_data_path, eval_batch_size, dataloader_num_workers, processor)
