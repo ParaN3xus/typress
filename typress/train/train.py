@@ -63,14 +63,16 @@ def cli_train(config_path):
     eval_data_path = config["dataset"]["eval"]
     epoches = config["params"]["epoches"]
     learning_rate = config["params"]["learning_rate"]
+    train_batch_size = config["params"]["train_batch_size"]
+    eval_batch_size = config["params"]["eval_batch_size"]
     save_path = config["model"]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model, processor = load_model(model_path, device)
     model.to(device)
 
-    train_dataloader = get_dataloader(train_data_path, processor)
-    eval_dataloader = get_dataloader(eval_data_path, processor)
+    train_dataloader = get_dataloader(train_data_path, train_batch_size, processor)
+    eval_dataloader = get_dataloader(eval_data_path, eval_batch_size, processor)
 
     train_and_eval(
         model,

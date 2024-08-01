@@ -6,6 +6,8 @@
     },
     "params": {
         "epoches": 1,
-        "learning_rate": 5e-5
+        "learning_rate": 5e-5,
+        "train_batch_size": 8,
+        "eval_batch_size": 8
     }
 }
