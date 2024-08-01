@@ -8,42 +8,37 @@ import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline';
 
 const toast = useToast();
 
-const API_ROOT = import.meta.env.VITE_API_ROOT;
-// const API_ROOT = 'http://localhost:5676'; // Replace with actual API root
+//const API_ROOT = import.meta.env.VITE_API_ROOT;
+const API_ROOT = 'http://localhost:5676'; // Replace with actual API root
 
-const formula = ref('');
+const formula = ref(undefined);
 const showFeedback = ref(false);
 const uploadedImageUrl = ref('');
 const uploadedImageFile = ref(null); // Store the uploaded image file
 const renderedSvg = ref('');
 const isTypstInitialized = ref(false);
 const darkMode = ref(false); // Add darkMode ref
-const isRecognizing = ref(false); // Add loading state
 const isRendering = ref(false); // Add loading state
+const showFeedbackTooltip = ref(false);
 
 const initializeTypst = () => {
   return new Promise((resolve) => {
     const typstScript = document.getElementById('typst');
-    if (typstScript) {
-      typstScript.addEventListener('load', () => {
-        $typst.setCompilerInitOptions({
-          getModule: () =>
-            'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm',
-        });
-        $typst.setRendererInitOptions({
-          getModule: () =>
-            'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm',
-        });
-        isTypstInitialized.value = true;
-        resolve();
+    typstScript.addEventListener('load', () => {
+      $typst.setCompilerInitOptions({
+        getModule: () =>
+          'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm',
       });
-    } else {
-      // Handle case where the script is not found or already loaded
+      $typst.setRendererInitOptions({
+        getModule: () =>
+          'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm',
+      });
       isTypstInitialized.value = true;
       resolve();
-    }
+    });
   });
 };
+
 const renderFormula = async () => {
   if (!isTypstInitialized.value || !formula.value) {
     return;
@@ -51,7 +46,6 @@ const renderFormula = async () => {
   try {
     const value = await $typst.svg({
       mainContent: `#set page(width: auto, height: auto, margin: (x: 5pt, y: 5pt))
-      //#show math.equation: set text(26pt)
       $ ${formula.value} $`
     });
 
@@ -64,7 +58,6 @@ const renderFormula = async () => {
       svgElement.style.width = "100%";
       svgElement.style.height = "auto";
       renderedSvg.value = tempDiv.innerHTML;
-      await nextTick();
     } else {
       throw new Error("SVG element not found");
     }
@@ -72,34 +65,49 @@ const renderFormula = async () => {
     toast.error(`Error: ${error}`);
     renderedSvg.value = `Error occurred while rendering: ${error}`;
   } finally {
-    isRendering.value = false; // Move loading state here
+    isRendering.value = false;
   }
 };
 
-// Function to update SVG colors based on the theme
-const updateSvgTheme = (svgElement, mode) => {
-  const themeColor = mode ? "#ffffff" : "#000000";
-  svgElement.querySelectorAll("*").forEach((element) => {
+watchPostEffect(() => {
+  const svgContent = renderedSvg.value;
+
+  if (!svgContent) {
+    return;
+  }
+
+  const svgContainer = document.querySelector(".rendered-svg-container svg");
+  if (!svgContainer) {
+    return;
+  }
+  const themeColor = darkMode.value ? "#ffffff" : "#000000";
+  svgContainer.querySelectorAll("*").forEach((element) => {
     element.setAttribute("fill", themeColor);
     element.setAttribute("stroke", themeColor);
   });
-};
-
-// Watch for changes in darkMode and update the SVG theme
-watchPostEffect(() => {
-  const svgContainer = document.querySelector(".rendered-svg-container svg");
-  console.log(1)
-  if (svgContainer) {
-    updateSvgTheme(svgContainer, darkMode.value);
-  }
 });
 
+watch([isTypstInitialized, formula], async () => {
+  if (!formula.value) {
+    return;
+  }
+  await renderFormula();
 
-watch([isTypstInitialized, formula], renderFormula);
+  setTimeout(() => {
+    showFeedbackTooltip.value = true;
+
+    setTimeout(() => {
+      showFeedbackTooltip.value = false;
+    }, 3000);
+  }, 1500);
+});
 
 const handleFileUpload = async (file) => {
   try {
-    uploadedImageFile.value = file; // Save the uploaded image file
+    formula.value = '';
+    isRendering.value = true;
+
+    uploadedImageFile.value = file;
     const reader = new FileReader();
     reader.onload = (event) => {
       uploadedImageUrl.value = event.target.result;
@@ -114,9 +122,6 @@ const handleFileUpload = async (file) => {
       body: formData
     });
 
-    isRecognizing.value = true; // Move loading state here
-    isRendering.value = true;
-
     const data = await response.json();
     if (data.formula) {
       toast.success("Image recognized!");
@@ -127,7 +132,6 @@ const handleFileUpload = async (file) => {
   } catch (error) {
     toast.error(`Error: ${error}`);
   } finally {
-    isRecognizing.value = false;
   }
 };
 
@@ -146,7 +150,7 @@ const submitFeedback = async (isHandwritten) => {
       showFeedback.value = false;
       toast.success('Feedback submitted successfully');
     } else {
-      toast.error('Failed to submit feedback.');
+      toast.error(`Failed to submit feedback: ${response}`);
     }
   } catch (error) {
     toast.error(`An error occurred while submitting feedback: ${error}`);
@@ -191,33 +195,39 @@ onMounted(async () => {
   <div :data-theme="darkMode ? 'dark' : 'light'" class="w-full flex flex-col min-h-screen">
     <header class="flex justify-between items-center w-full bg-base-200 p-4 px-8">
       <h1 class="text-2xl font-bold">Typress</h1>
-      <div class="flex items-center space-x-2">
-        <SunIcon v-if="!darkMode" class="w-6 h-6 text-yellow-500" />
-        <MoonIcon v-else class="w-6 h-6 text-gray-500" />
-        <input type="checkbox" class="toggle toggle-lg" @change="toggleDarkMode" :checked="darkMode" />
-      </div>
+      <label class="swap swap-rotate">
+        <input type="checkbox" class="theme-controller" @change="toggleDarkMode" :checked="darkMode" />
+        <SunIcon class="swap-off w-10 h-10 text-yellow-500" />
+        <MoonIcon class="swap-on w-10 h-10 text-gray-500" />
+      </label>
     </header>
     <div class="flex justify-center items-start flex-1 p-4">
       <div class="bg-base-100 p-6 rounded-lg shadow-offset mt-4 w-full max-w-6xl">
         <div class="flex justify-center">
           <Shields />
         </div>
-        <FormulaResult :formula="formula" style="width: 100%; text-align: left;" />
-        <div class="image-container flex justify-center items-center mt-4">
-          <div class="uploaded-img-container tooltip tooltip-bottom" data-tip="Click or Paste to upload"
+        <FormulaResult :formula="formula" class="w-full text-left" />
+        <div class="image-container flex justify-center items-stretch w-full gap-16 mt-4">
+          <div class="uploaded-img-container flex-1 tooltip tooltip-bottom" data-tip="Click or Paste to upload"
             @click="handleImageClick">
             <input type="file" ref="fileInputRef" class="hidden" @change="handleFileChange" accept="image/*" />
-            <img v-if="uploadedImageUrl" :src="uploadedImageUrl" class="uploaded-img w-full" alt="Uploaded Image" />
-            <div v-else class="placeholder w-full">
-              <span class="text-center">Click or Paste to upload</span>
+            <div v-if="uploadedImageUrl" class="flex items-center justify-center h-full">
+              <img :src="uploadedImageUrl" class="w-full items-center flex" alt="Uploaded Image" />
+            </div>
+            <div v-else class="h-32 w-full flex items-center justify-center bg-base-100">
+              <div class="border-2 border-dashed border-gray-400 h-full w-full flex items-center justify-center">
+                <span class="text-gray-500">Click or Paste to upload image</span>
+              </div>
             </div>
           </div>
 
-          <div class="rendered-svg-container tooltip tooltip-bottom" data-tip="Click to report recognize error"
+          <div class="rendered-svg-container flex-1 tooltip tooltip-bottom"
+            :class="{ 'tooltip-open': showFeedbackTooltip }" data-tip="Click to report recognize error"
             @click="showFeedback = true">
-            <span v-if="isRendering" class="loading loading-spinner loading-lg"></span>
-            <div v-else-if="renderedSvg" v-html="renderedSvg" class=" rendered-svg-containerml-4"></div>
-            <div v-else class="svg-placeholder ml-4">SVG will be rendered here</div>
+            <div v-if="isRendering" class="skeleton w-full h-full"></div>
+            <div v-else-if="renderedSvg" class="flex items-center justify-center h-full">
+              <div v-html="renderedSvg" class="flex items-center justify-center w-full h-full max-w-full max-h-full" />
+            </div>
           </div>
         </div>
         <FeedbackPopup v-if="showFeedback" @close="showFeedback = false" @submit="submitFeedback" />
@@ -228,61 +238,8 @@ onMounted(async () => {
 
 
 <style scoped>
+.uploaded-img-container,
 .rendered-svg-container {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: auto;
-}
-
-.rendered-svg-container svg {
-  width: 100%;
-  height: auto;
-  pointer-events: none;
-  /* Prevents SVG from intercepting clicks */
-}
-
-
-.rendered-svg-container,
-.uploaded-img-container {
-  flex: 1 1 0;
   max-width: 50%;
-  height: auto;
-  cursor: pointer;
-}
-
-.image-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  gap: 4px;
-}
-
-.placeholder,
-.svg-placeholder {
-  flex: 1 1 0;
-  max-width: 100%;
-  height: 200px;
-  border: 2px dashed #ccc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #999;
-}
-
-.uploaded-img-container {
-  position: relative;
-  flex: 1 1 0;
-  max-width: 50%;
-  height: auto;
-  cursor: pointer;
-}
-
-.loading-indicator {
-  text-align: center;
-  margin: 20px 0;
-  font-size: 1.5rem;
-  color: #666;
 }
 </style>
