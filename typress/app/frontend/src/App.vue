@@ -17,9 +17,11 @@ const uploadedImageUrl = ref('');
 const uploadedImageFile = ref(null); // Store the uploaded image file
 const renderedSvg = ref('');
 const isTypstInitialized = ref(false);
-const darkMode = ref(false);
 const isRendering = ref(false);
 const showFeedbackTooltip = ref(false);
+
+const currentHour = new Date().getHours();
+const darkMode = ref(currentHour >= 19 || currentHour < 7);
 
 const initializeTypst = () => {
   return new Promise((resolve) => {
