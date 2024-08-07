@@ -8,9 +8,12 @@ import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline';
 
 const toast = useToast();
 
-const API_ROOT = "http://localhost:5676";
-//const API_ROOT = window.API_ROOT || window.location.origin;
+var API_ROOT = window.API_ROOT || window.location.origin;
 
+if (process.env.NODE_ENV === 'development') {
+  var API_ROOT = "http://localhost:5676";
+  console.log('You are in development mode!');
+}
 
 const formula = ref(undefined);
 const showFeedback = ref(false);
@@ -37,20 +40,21 @@ const initializeTypst = () => {
         getModule: () =>
           'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm',
       });
+      $typst.svg({ mainContent: "" })
       isTypstInitialized.value = true;
       resolve();
     });
   });
 };
 
-const renderFormula = async () => {
-  if (!isTypstInitialized.value || !formula.value) {
+const renderFormula = async (formula_text) => {
+  if (!isTypstInitialized.value || !formula_text) {
     return;
   }
   try {
     const value = await $typst.svg({
       mainContent: `#set page(width: auto, height: auto, margin: (x: 5pt, y: 5pt))
-      $ ${formula.value} $`
+      $ ${formula_text} $`
     });
 
     // Create a temporary div to parse the SVG string
@@ -95,7 +99,7 @@ watch([isTypstInitialized, formula], async () => {
   if (!formula.value) {
     return;
   }
-  await renderFormula();
+  await renderFormula(formula.value);
 
   setTimeout(() => {
     showFeedbackTooltip.value = true;
