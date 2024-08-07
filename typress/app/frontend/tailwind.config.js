@@ -7,9 +7,8 @@ export default {
   theme: {
     extend: {
       boxShadow: {
-        'inner-strong': 'inset 1px 2px 6px 1px rgba(0, 0, 0, 0.1)',
+        'inner-strong': 'inset -1px 2px 9px 1.5px rgba(0, 0, 0, 0.1)',
         'offset': '-3px 6px 20px 1px rgba(0, 0, 0, 0.2)'
-
       },
     },
   },
