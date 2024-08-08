@@ -8,7 +8,14 @@ __pycache__
 poetry.lock
 
 # Models
+model
 fusion
+
+# Dataset
+dataset
+
+# Fonts
+fonts
 
 # temp dir
 tmp/
