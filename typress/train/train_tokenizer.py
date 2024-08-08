@@ -6,6 +6,7 @@ import os
 
 def train_tokenizer(csv_path, vocab_size):
     df = get_dataset_df(csv_path)
+    texts = df["text"].tolist()
     texts = [str(text) for text in texts]
     texts = tqdm(texts)
 
