@@ -83,7 +83,8 @@ def gen_img(equation: str) -> str:
         if os.path.exists(output_fn(ppi)):
             continue
         res = subprocess.run(
-            ["typst", "compile", input_fn, output_fn(ppi), "--ppi", str(ppi)],
+            ["typst", "compile", input_fn, output_fn(ppi), "--ppi", str(
+                ppi), "--font-path", "./fonts/"],
             stderr=subprocess.PIPE,
             stdout=subprocess.PIPE,
         )
@@ -96,7 +97,7 @@ def gen_img(equation: str) -> str:
     if not ok:
         raise ValueError(f"Failed to compile {equation}")
 
-    augment_image_file(output_fn(ppi))
+    # augment_image_file(output_fn(ppi))
     return name
 
 

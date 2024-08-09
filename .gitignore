@@ -1,5 +1,6 @@
 # Environment
 .env
+config*.json
 
 # python
 __pycache__
@@ -8,7 +9,17 @@ __pycache__
 poetry.lock
 
 # Models
+model
 fusion
+
+# Dataset
+dataset/*
+
+# Fonts
+fonts
+
+# Typst
+*.pdf
 
 # temp dir
 tmp/

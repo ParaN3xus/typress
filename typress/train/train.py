@@ -73,6 +73,11 @@ def cli_train(config_path):
 
     model, processor = load_model(model_path, device)
 
+    # freeze encoder
+    for param in model.encoder.parameters():
+        param.requires_grad = False
+
+
     train_dataloader = get_dataloader(train_data_path, train_batch_size, dataloader_num_workers, processor)
     eval_dataloader = get_dataloader(eval_data_path, eval_batch_size, dataloader_num_workers, processor)
 
