@@ -1,5 +1,6 @@
 # Environment
 .env
+config*.json
 
 # python
 __pycache__
@@ -12,10 +13,13 @@ model
 fusion
 
 # Dataset
-dataset
+dataset/*
 
 # Fonts
 fonts
+
+# Typst
+*.pdf
 
 # temp dir
 tmp/
