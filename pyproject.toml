@@ -21,9 +21,13 @@ typst = "^0.11.1"
 jiwer = "^3.0.4"
 opencv-python = "^4.10.0.84"
 python-dotenv = "^1.0.1"
+numpy = "^1.26.4"
 
 [tool.poetry.scripts]
 typress = "typress.__main__:main"
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
 
 [build-system]
 requires = ["poetry-core"]
