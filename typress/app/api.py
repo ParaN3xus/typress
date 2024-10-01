@@ -1,3 +1,8 @@
+import mimetypes
+
+mimetypes.add_type("application/javascript", ".js")
+mimetypes.add_type("text/css", ".css")
+
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from PIL import Image
