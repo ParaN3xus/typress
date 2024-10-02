@@ -78,9 +78,8 @@ if __name__ == "__main__":
         "-c",
         "--continuous",
         dest="continuous",
-        type=bool,
+        action="store_true",
         help="Whether to predict continuously",
-        default=True,
     )
 
     args = parser.parse_args()
