@@ -34,11 +34,11 @@ const initializeTypst = () => {
     typstScript.addEventListener('load', () => {
       $typst.setCompilerInitOptions({
         getModule: () =>
-          'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm',
+          '/wasm/typst_ts_web_compiler_bg.wasm',
       });
       $typst.setRendererInitOptions({
         getModule: () =>
-          'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm',
+          '/wasm/typst_ts_renderer_bg.wasm',
       });
       $typst.svg({ mainContent: "" })
       isTypstInitialized.value = true;
