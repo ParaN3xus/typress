@@ -3,7 +3,7 @@ import { ref, watch, onMounted, computed } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/solid';
 
 const fileInputRef = ref(null);
-const emit = defineEmits(['update:bboxes', 'update:curBbox']);
+const emit = defineEmits(['update:curBbox']);
 const props = defineProps({
     imgUrl: String,
     bboxes: {
@@ -107,7 +107,6 @@ const onMouseMove = (e) => {
             bbox.height = height;
         }
 
-        emit('update:bboxes', bboxes.value);
     } else if (isResizing.value && currentBbox.value) {
         const rect = imageRef.value.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -141,7 +140,6 @@ const onMouseMove = (e) => {
                 break;
         }
 
-        emit('update:bboxes', bboxes.value);
     }
 };
 
@@ -158,7 +156,6 @@ const startResize = (corner, bbox, e) => {
     isResizing.value = true;
     resizeCorner.value = corner;
     currentBbox.value = bbox;
-    emit('update:curBbox', bbox);
 };
 
 const deleteBbox = (index, e) => {
@@ -168,7 +165,6 @@ const deleteBbox = (index, e) => {
         currentBbox.value = bboxes.value[0] || null;
         emit('update:curBbox', currentBbox.value);
     }
-    emit('update:bboxes', bboxes.value);
 };
 
 const selectBbox = (bbox) => {
