@@ -9,7 +9,7 @@ __pycache__
 poetry.lock
 
 # Models
-model
+./model
 fusion
 
 # Dataset
@@ -23,6 +23,7 @@ fonts
 
 # temp dir
 tmp/
+.cache/
 
 # frontend
 # Logs
