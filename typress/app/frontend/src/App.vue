@@ -56,7 +56,8 @@ const renderFormula = async (formula_text) => {
   }
   try {
     const value = await $typst.svg({
-      mainContent: `#set page(width: auto, height: auto, margin: (x: 5pt, y: 5pt))
+      mainContent: `#show math.equation: set text(fill: ${darkMode.value ? "white" : "black"})
+      #set page(width: auto, height: auto, margin: (x: 5pt, y: 5pt))
       $ ${formula_text} $`
     });
 
@@ -80,25 +81,7 @@ const renderFormula = async (formula_text) => {
   }
 };
 
-watchPostEffect(() => {
-  const svgContent = renderedSvg.value;
-
-  if (!svgContent) {
-    return;
-  }
-
-  const svgContainer = document.querySelector(".rendered-svg-container svg");
-  if (!svgContainer) {
-    return;
-  }
-  const themeColor = darkMode.value ? "#ffffff" : "#000000";
-  svgContainer.querySelectorAll("*").forEach((element) => {
-    element.setAttribute("fill", themeColor);
-    element.setAttribute("stroke", themeColor);
-  });
-});
-
-watch([isTypstInitialized, formula], async () => {
+watch([isTypstInitialized, darkMode, formula], async () => {
   if (!formula.value) {
     return;
   }
