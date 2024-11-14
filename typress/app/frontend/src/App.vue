@@ -4,6 +4,7 @@ import { useToast } from 'vue-toastification';
 import FormulaResult from './components/FormulaResult.vue';
 import FeedbackPopup from './components/FeedbackPopup.vue';
 import Shields from './components/Shields.vue';
+import FormulaImg from './components/FormulaImg.vue';
 import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline';
 
 const toast = useToast();
@@ -180,18 +181,7 @@ const handlePaste = (event) => {
   }
 };
 
-const fileInputRef = ref(null);
 
-const handleImageClick = () => {
-  fileInputRef.value.click();
-};
-
-const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    handleFileUpload(file);
-  }
-};
 
 const toggleDarkMode = () => {
   darkMode.value = !darkMode.value;
@@ -220,18 +210,7 @@ onMounted(async () => {
         </div>
         <FormulaResult :formula="formula" class="w-full text-left" />
         <div class="image-container flex justify-center items-stretch w-full gap-4 mt-4">
-          <div class="uploaded-img-container flex-1 tooltip tooltip-bottom" data-tip="Click or Paste to upload"
-            @click="handleImageClick">
-            <input type="file" ref="fileInputRef" class="hidden" @change="handleFileChange" accept="image/*" />
-            <div v-if="uploadedImageUrl" class="flex items-center justify-center h-full">
-              <img :src="uploadedImageUrl" class="w-full items-center flex" alt="Uploaded Image" />
-            </div>
-            <div v-else class="h-32 w-full flex items-center justify-center bg-base-100">
-              <div class="border-2 border-dashed border-gray-400 h-full w-full flex items-center justify-center">
-                <span class="text-gray-500">Click or Paste to upload image</span>
-              </div>
-            </div>
-          </div>
+          <FormulaImg :img-url="uploadedImageUrl" @upload="handleFileUpload"></FormulaImg>
 
           <div class="rendered-svg-container flex-1 tooltip tooltip-bottom"
             :class="{ 'tooltip-open': showFeedbackTooltip }" data-tip="Click to report recognize error"
