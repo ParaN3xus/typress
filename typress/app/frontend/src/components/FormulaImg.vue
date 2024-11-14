@@ -20,8 +20,9 @@ const bboxes = ref([...props.bboxes]);
 const currentBbox = ref(props.curBbox);
 
 watch(() => props.bboxes, (newBboxes) => {
+    console.log(newBboxes)
     bboxes.value = [...newBboxes];
-    if (newBboxes.length > 0 && !currentBbox.value) {
+    if (newBboxes.length > 0) {
         currentBbox.value = newBboxes[0];
         emit('update:curBbox', newBboxes[0]);
     }
@@ -38,9 +39,7 @@ const hoveredBbox = ref(null);
 const calculateScale = () => {
     if (imageRef.value) {
         const imgWidth = imageRef.value.naturalWidth;
-        const imgHeight = imageRef.value.naturalHeight;
         const containerWidth = imageRef.value.clientWidth;
-        const containerHeight = imageRef.value.clientHeight;
         imgScale.value = containerWidth / imgWidth;
     }
 };
@@ -51,15 +50,6 @@ const scaleBbox = (bbox) => {
         y: bbox.y * imgScale.value,
         width: bbox.width * imgScale.value,
         height: bbox.height * imgScale.value
-    };
-};
-
-const unscaleBbox = (bbox) => {
-    return {
-        x: bbox.x / imgScale.value,
-        y: bbox.y / imgScale.value,
-        width: bbox.width / imgScale.value,
-        height: bbox.height / imgScale.value
     };
 };
 
