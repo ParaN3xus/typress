@@ -5,7 +5,7 @@ import FormulaResult from './components/FormulaResult.vue';
 import FeedbackPopup from './components/FeedbackPopup.vue';
 import Shields from './components/Shields.vue';
 import FormulaImg from './components/FormulaImg.vue';
-import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline';
+import { SunIcon, MoonIcon, ArrowUpTrayIcon } from '@heroicons/vue/24/outline';
 
 const toast = useToast();
 
@@ -27,6 +27,7 @@ const isTypstInitialized = ref(false);
 const isRendering = ref(false);
 const showFeedbackTooltip = ref(false);
 const isSubmittingFeedback = ref(false);
+const fileInputRef = ref(null);
 
 const currentHour = new Date().getHours();
 const darkMode = ref(currentHour >= 19 || currentHour < 7);
@@ -194,6 +195,17 @@ const toggleDarkMode = () => {
   darkMode.value = !darkMode.value;
 };
 
+const handleUploadButtonClick = () => {
+  fileInputRef.value.click();
+};
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    handleFileUpload(file);
+  }
+};
+
 onMounted(async () => {
   window.addEventListener('paste', handlePaste);
   await initializeTypst();
@@ -216,7 +228,14 @@ onMounted(async () => {
           <Shields />
         </div>
         <FormulaResult :formula="formula" class="w-full text-left" />
-        <div class="image-container flex justify-center items-stretch w-full gap-4 mt-4">
+        <div class="justify-left gap-4 mt-4 w-full h-auto">
+          <input type="file" ref="fileInputRef" class="hidden" accept="image/*" @change="handleFileChange" />
+          <button id="upload" class="btn btn-square w-32 h-auto" @click="handleUploadButtonClick">
+            <ArrowUpTrayIcon class="h-6 w-6  group-hover:fill-white" />
+            <p>Upload</p>
+          </button>
+        </div>
+        <div class="flex justify-center items-stretch w-full gap-4 mt-4">
           <FormulaImg :img-url="uploadedImageUrl" :bboxes="bboxes" :cur-bbox="selectedBbox" @upload="handleFileUpload"
             @update:curBbox="handleUpdateCurBbox">
           </FormulaImg>

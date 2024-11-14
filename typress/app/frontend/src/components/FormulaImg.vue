@@ -2,7 +2,6 @@
 import { ref, watch, onMounted, computed } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/solid';
 
-const fileInputRef = ref(null);
 const emit = defineEmits(['update:curBbox']);
 const props = defineProps({
     imgUrl: String,
@@ -169,11 +168,9 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="relative flex-1 cursor-pointer" data-tip="Click or Paste to upload" @mousemove="onMouseMove"
-        @mouseup="stopDrawing" @mouseleave="stopDrawing">
-
-        <input type="file" ref="fileInputRef" class="hidden" accept="image/*" />
-
+    <div class="relative flex-1 cursor-pointer tooltip tooltip-bottom"
+        data-tip="Click &quot;Upload&quot; button or Paste to upload" @mousemove="onMouseMove" @mouseup="stopDrawing"
+        @mouseleave="stopDrawing">
         <div v-if="props.imgUrl" class="relative w-full" @mousedown="drawBbox">
             <img ref="imageRef" :src="props.imgUrl" class="w-full h-auto draggable-none select-none"
                 alt="Uploaded Image" @load="calculateScale" />
@@ -211,7 +208,7 @@ onMounted(() => {
         </div>
         <div v-else class="h-32 w-full flex items-center justify-center bg-base-100">
             <div class="border-2 border-dashed border-gray-400 h-full w-full flex items-center justify-center">
-                <span class="text-gray-500">Click or Paste to upload image</span>
+                <span class="text-gray-500">Click "Upload" button or Paste to upload image</span>
             </div>
         </div>
     </div>
