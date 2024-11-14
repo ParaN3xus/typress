@@ -12,21 +12,21 @@
   },
   "dependencies": {
     "@heroicons/vue": "^2.1.5",
-    "autoprefixer": "^10.4.19",
-    "daisyui": "^4.12.10",
-    "postcss": "^8.4.40",
-    "tailwindcss": "^3.4.7",
-    "vue": "^3.4.29",
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^4.12.14",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.14",
+    "vue": "^3.5.12",
     "vue-toastification": "2.0.0-rc.5"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.8.0",
-    "@vitejs/plugin-vue": "^5.0.5",
+    "@rushstack/eslint-patch": "^1.10.4",
+    "@vitejs/plugin-vue": "^5.2.0",
     "@vue/eslint-config-prettier": "^9.0.0",
-    "eslint": "^8.57.0",
-    "eslint-plugin-vue": "^9.23.0",
-    "prettier": "^3.2.5",
-    "vite": "^5.3.1"
+    "eslint": "^9.14.0",
+    "eslint-plugin-vue": "^9.31.0",
+    "prettier": "^3.3.3",
+    "vite": "^5.4.11"
   },
   "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e"
 }
