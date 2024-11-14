@@ -17,6 +17,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const formula = ref(undefined);
+const bboxes = ref([])
+const selectedBbox = ref(null)
 const showFeedback = ref(false);
 const uploadedImageUrl = ref('');
 const uploadedImageFile = ref(null); // Store the uploaded image file
@@ -111,11 +113,35 @@ watch([isTypstInitialized, formula], async () => {
   }, 1500);
 });
 
-const handleFileUpload = async (file) => {
+const handleUpdateCurBbox = async (newBbox) => {
   try {
     formula.value = '';
     isRendering.value = true;
 
+    const formData = new FormData();
+    formData.append('image', uploadedImageFile.value);
+    formData.append('bbox', JSON.stringify(newBbox));
+
+    const response = await fetch(`${API_ROOT}/api/rec`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+    if (data.formula) {
+      toast.success("Formula recognized!");
+      formula.value = data.formula;
+    } else {
+      toast.error(data.error || 'Invalid response from server.');
+    }
+  } catch (error) {
+    toast.error(`Error: ${error}`);
+  } finally {
+  }
+}
+
+const handleFileUpload = async (file) => {
+  try {
     uploadedImageFile.value = file;
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -126,15 +152,15 @@ const handleFileUpload = async (file) => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch(`${API_ROOT}/api/formula`, {
+    const response = await fetch(`${API_ROOT}/api/det`, {
       method: 'POST',
       body: formData
     });
 
     const data = await response.json();
-    if (data.formula) {
-      toast.success("Image recognized!");
-      formula.value = data.formula;
+    if (data.bboxes) {
+      toast.success("Formula detected!");
+      bboxes.value = data.bboxes;
     } else {
       toast.error(data.error || 'Invalid response from server.');
     }
@@ -181,8 +207,6 @@ const handlePaste = (event) => {
   }
 };
 
-
-
 const toggleDarkMode = () => {
   darkMode.value = !darkMode.value;
 };
@@ -210,7 +234,9 @@ onMounted(async () => {
         </div>
         <FormulaResult :formula="formula" class="w-full text-left" />
         <div class="image-container flex justify-center items-stretch w-full gap-4 mt-4">
-          <FormulaImg :img-url="uploadedImageUrl" @upload="handleFileUpload"></FormulaImg>
+          <FormulaImg :img-url="uploadedImageUrl" :bboxes="bboxes" :cur-bbox="selectedBbox" @upload="handleFileUpload"
+            @update:curBbox="handleUpdateCurBbox">
+          </FormulaImg>
 
           <div class="rendered-svg-container flex-1 tooltip tooltip-bottom"
             :class="{ 'tooltip-open': showFeedbackTooltip }" data-tip="Click to report recognize error"
