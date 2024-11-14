@@ -30,7 +30,7 @@ poetry shell
 
 ## Run
 
-### Development Run
+### Development Run or Internal Use
 
 #### Run Typress Web server
 
@@ -40,7 +40,7 @@ Ensure you are in the repo root directory and execute
 python -m typress
 ```
 
-### Production Run
+### Production Run or Shared Use
 
 #### Set Up .env
 
@@ -63,6 +63,7 @@ gunicorn --bind 0.0.0.0:8000 wsgi:app
 
 - [ ] Improve the tex2typ reconstruction strategy for `spacing`.
 - [ ] Fix memory leaks in normalized formulas
+- [ ] Fix memory leaks in formula detection
 - [ ] Add formula detection
 - [ ] Explore using LoRA to fine-tune the OCR model for TeX
 - [ ] Publish to PyPI
@@ -98,6 +99,7 @@ This project makes use of the following open-source projects or datasets:
 - [evaluate](https://github.com/huggingface/evaluate): A library for easily evaluating machine learning models and datasets.
 - [eq_query_rec](https://github.com/sjfhsjfh/eq_query_rec): Query equations from Typst source file and reconstruct normalized equation from querying result.
 - [typst.ts](https://github.com/Myriad-Dreamin/typst.ts): Run Typst in JavaScriptWorld.
+- [texteller_det](https://huggingface.co/TonyLee1256/texteller_det): Formula detection.
 - [fusion-image-to-latex-datasets](https://huggingface.co/datasets/hoang-quoc-trung/fusion-image-to-latex-datasets): The largest dataset to date from online sources.
 - [latex-formulas](https://huggingface.co/datasets/OleehyO/latex-formulas): TexTeller previous dataset.
 
