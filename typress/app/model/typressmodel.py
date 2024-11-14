@@ -68,13 +68,42 @@ class typressmodel:
                         break
             if keep:
                 filtered_bbox.append(box1)
-        
+
+        if not filtered_bbox:
+            image = Image.open(img)
+            img_width, img_height = image.size
+
+            margin_width = img_width * 0.03
+            margin_height = img_height * 0.03
+
+            default_bbox = {
+                "x": margin_width,
+                "y": margin_height,
+                "width": img_width - 2 * margin_width,
+                "height": img_height - 2 * margin_height
+            }
+
+            filtered_bbox.append(default_bbox)
         return filtered_bbox
 
 
     def recognize(self, img, bbox):
         img = Image.open(img).convert("RGB")
+        img_width, img_height = img.size
 
+        expand_pt = 3
+
+        new_x = max(bbox["x"] - expand_pt, 0)
+        new_y = max(bbox["y"] - expand_pt, 0)
+        new_width = min(bbox["width"] + 2 * expand_pt, img_width - new_x)
+        new_height = min(bbox["height"] + 2 * expand_pt, img_height - new_y)
+        bbox = {
+            "x": new_x,
+            "y": new_y,
+            "width": new_width,
+            "height": new_height
+        }
+        
         cropped_img = crop_bbox(img, bbox)
         pixel_values = self.processor(images=cropped_img, return_tensors="pt").pixel_values.to(
             self.device
