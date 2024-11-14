@@ -39,15 +39,21 @@ def load_det_model(device):
 
     predictor = None
     if device.type == "cuda":
+        options = onnxruntime.SessionOptions()
+        options.enable_cpu_mem_arena = False
+
         cuda_provider = ("CUDAExecutionProvider", {
             "device_id": device.index,        
             "arena_extend_strategy": "kNextPowerOfTwo",      
-            "gpu_mem_limit": 2 * 1024 * 1024 * 1024,    
+            "gpu_mem_limit": 3 * 1024 * 1024 * 1024,    
             "cudnn_conv_algo_search": "EXHAUSTIVE",
             "do_copy_in_default_stream": True,
         })
 
-        predictor = onnxruntime.InferenceSession(model_path, providers=[cuda_provider])
+        predictor = onnxruntime.InferenceSession(model_path,
+                                                sess_options=options,
+                                                providers=[cuda_provider])
+
     else:
         predictor = onnxruntime.InferenceSession(model_path, providers=['CPUExecutionProvider'])
 
