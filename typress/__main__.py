@@ -99,6 +99,6 @@ if __name__ == "__main__":
             args.host, args.port, debug=True
         )
     if args.command == "cli":
-        from .app.model import generate_cli
+        from .app.model.ocr_model.model import generate_cli
 
         generate_cli(args.model, args.image, args.continuous, args.device)
