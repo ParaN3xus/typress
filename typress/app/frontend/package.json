@@ -16,15 +16,15 @@
     "daisyui": "^4.12.14",
     "lodash": "^4.17.21",
     "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.14",
-    "vue": "^3.5.12",
+    "tailwindcss": "^3.4.15",
+    "vue": "^3.5.13",
     "vue-toastification": "2.0.0-rc.5"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.10.4",
     "@vitejs/plugin-vue": "^5.2.0",
     "@vue/eslint-config-prettier": "^9.0.0",
-    "eslint": "^9.14.0",
+    "eslint": "^9.15.0",
     "eslint-plugin-vue": "^9.31.0",
     "prettier": "^3.3.3",
     "vite": "^5.4.11"
