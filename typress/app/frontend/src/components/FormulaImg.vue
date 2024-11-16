@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/solid';
+import { cloneDeep } from 'lodash'
 
 const emit = defineEmits(['update:curBbox']);
 const props = defineProps({
@@ -15,12 +16,11 @@ const props = defineProps({
     }
 });
 
-const bboxes = ref([...props.bboxes]);
+const bboxes = ref([]);
 const currentBbox = ref(props.curBbox);
 
 watch(() => props.bboxes, (newBboxes) => {
-    console.log(newBboxes)
-    bboxes.value = [...newBboxes];
+    bboxes.value = cloneDeep(newBboxes);
     if (newBboxes.length > 0) {
         currentBbox.value = newBboxes[0];
         emit('update:curBbox', newBboxes[0]);

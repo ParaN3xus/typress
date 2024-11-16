@@ -17,6 +17,9 @@ importers:
       daisyui:
         specifier: ^4.12.14
         version: 4.12.14(postcss@8.4.49)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       postcss:
         specifier: ^8.4.49
         version: 8.4.49
