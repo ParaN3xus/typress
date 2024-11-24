@@ -64,7 +64,7 @@ gunicorn --bind 0.0.0.0:8000 wsgi:app
 - [ ] Improve the tex2typ reconstruction strategy for `spacing`.
 - [ ] Fix memory leaks in normalized formulas
 - [ ] Fix memory leaks in formula detection
-- [ ] Add formula detection
+- [x] Add formula detection
 - [ ] Explore using LoRA to fine-tune the OCR model for TeX
 - [ ] Publish to PyPI
 - [ ] Document the complete dataset construction process
