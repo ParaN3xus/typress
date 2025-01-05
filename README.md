@@ -23,7 +23,6 @@ We use [Poetry](https://python-poetry.org/) to manage project dependencies. If y
 
 ```sh
 poetry install
-poetry shell
 ```
 
 ### TODO: PyPI
@@ -37,6 +36,7 @@ poetry shell
 Ensure you are in the repo root directory and execute
 
 ```sh
+poetry shell
 python -m typress
 ```
 
