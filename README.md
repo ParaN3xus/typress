@@ -17,12 +17,12 @@ git clone https://github.com/ParaN3xus/typress
 cd typress
 ```
 
+We use [uv](https://github.com/astral-sh/uv) to manage project dependencies. If you don't have uv installed, please follow the instructions on the [uv installation page](https://docs.astral.sh/uv/getting-started/installation/).
+
 Install dependencies:
 
-We use [Poetry](https://python-poetry.org/) to manage project dependencies. If you don't have Poetry installed, please follow the instructions on the [Poetry installation page](https://python-poetry.org/docs/).
-
 ```sh
-poetry install
+uv sync
 ```
 
 ### TODO: PyPI
@@ -36,8 +36,7 @@ poetry install
 Ensure you are in the repo root directory and execute
 
 ```sh
-poetry shell
-python -m typress
+uv run -m typress
 ```
 
 ### Production Run or Shared Use
