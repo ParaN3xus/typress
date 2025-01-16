@@ -1,36 +1,29 @@
-[tool.poetry]
+[project]
 name = "typress"
 version = "0.1.0"
 description = "Typst Equation OCR"
-authors = ["ParaN3xus <paran3xus007@gmail.com>"]
+authors = [
+    {name = "ParaN3xus", email = "paran3xus007@gmail.com"},
+]
 license = "MIT"
 readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flask-cors>=5.0.0",
+    "flask>=3.1.0",
+    "onnxruntime>=1.20.1",
+    "pillow>=11.1.0",
+    "transformers>=4.47.1",
+    "opencv-python>=4.10.0.84",
+    "torch>=2.5.1",
+    "python-dotenv>=1.0.1",
+    "evaluate>=0.4.3",
+    "typst>=0.12.2",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-evaluate = "^0.4.2"
-Flask = "^3.0.3"
-Flask-Cors = "^4.0.1"
-pandas = "^2.2.2"
-pillow = "^10.4.0"
-tokenizers = "^0.19.1"
-torch = "^2.4.0"
-tqdm = "^4.66.4"
-transformers = "^4.43.3"
-typst = "^0.11.1"
-jiwer = "^3.0.4"
-opencv-python = "^4.10.0.84"
-python-dotenv = "^1.0.1"
-numpy = "^1.26.4"
-onnxruntime = "^1.20.0"
-onnxruntime-gpu = "^1.20.0"
-
-[tool.poetry.scripts]
-typress = "typress.__main__:main"
-
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.29.5"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "ipywidgets>=8.1.5",
+    "jiwer>=3.0.5",
+]
