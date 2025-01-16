@@ -76,7 +76,7 @@ gunicorn --bind 0.0.0.0:8000 wsgi:app
 If you have a collection of Typst mathematical formula text (which can be included in Typst documents), you can create a dataset by running the following command in the Typst workspace root:
 
 ```bash
-python -m typress.dataset extract
+uv run -m typress.dataset extract
 ```
 
 Then, submit the generated `out.json` file to us via email at [paran3xus007@gmail.com](mailto:paran3xus007@gmail.com). By submitting your data to us, you agree to make your dataset publicly available.
