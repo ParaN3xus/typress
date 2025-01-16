@@ -6,7 +6,6 @@ config*.json
 __pycache__
 *.pyc
 .venv
-poetry.lock
 
 # Models
 ./model
