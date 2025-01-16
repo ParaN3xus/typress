@@ -20,3 +20,10 @@ dependencies = [
     "evaluate>=0.4.3",
     "typst>=0.12.2",
 ]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "ipywidgets>=8.1.5",
+    "jiwer>=3.0.5",
+]
