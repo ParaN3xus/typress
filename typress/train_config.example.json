@@ -7,8 +7,14 @@
     "params": {
         "epoches": 1,
         "learning_rate": 5e-5,
+        "freeze_encoder": false,
         "train_batch_size": 8,
         "eval_batch_size": 8,
+        "eval_step": 2,
         "dataloader_num_workers": 32
+    },
+    "logging": {
+        "path": "train.log",
+        "log_step": 16
     }
 }

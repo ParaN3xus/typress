@@ -1,6 +1,7 @@
 from tqdm import tqdm
 import torch
 import evaluate
+from torch.utils.data import DataLoader
 
 cer_metric = evaluate.load("cer")
 
@@ -15,9 +16,12 @@ def compute_cer(pred_ids, label_ids, processor):
     return cer
 
 
-def eval(model, processor, eval_dataloader, device):
+def eval(model, eval_dataloader: DataLoader, device, logger):
     model.eval()
     valid_cer = 0.0
+
+    logger.log_metrics({"status": "evaluation_started"})
+
     with torch.no_grad():
         for batch in tqdm(eval_dataloader):
             outputs = model.module.generate(batch["pixel_values"].to(device))
@@ -27,8 +31,14 @@ def eval(model, processor, eval_dataloader, device):
             cer = compute_cer(
                 pred_ids=outputs,
                 label_ids=batch["labels"].to(device),
-                processor=processor,
+                processor=eval_dataloader.dataset.processor,
             )
             valid_cer += cer
+
+    final_cer = valid_cer / len(eval_dataloader)
+    logger.log_metrics({
+        "status": "evaluation_completed",
+        "final_cer": final_cer,
+    })
 
     return valid_cer

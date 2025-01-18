@@ -54,7 +54,7 @@ def get_dataset_df(csv_path):
     return df.reset_index(drop=True)
 
 
-def get_dataloader(csv_path, batch_size, num_workers, processor):
+def get_dataloader(csv_path, batch_size, num_workers, processor) -> DataLoader:
     df = get_dataset_df(csv_path)
     dataset = OCRDataset(
         root_dir=f"{os.path.dirname(csv_path)}/img/", df=df, processor=processor
