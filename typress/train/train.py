@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 from .eval import eval
 from .dataset import get_dataloader
-from ..app.model import save_model, load_model
+from ..app.model.ocr_model.model import save_model, load_ocr_model
 from torch.utils.data import DataLoader
 
 
@@ -126,7 +126,7 @@ def cli_train(config_path):
     try:
         logger.log_config(config)
 
-        model, processor = load_model(model_path, device)
+        model, processor = load_ocr_model(model_path, device)
 
         if freeze_encoder:
             for param in model.encoder.parameters():

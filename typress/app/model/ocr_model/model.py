@@ -5,8 +5,10 @@ from ..utils import get_device
 
 
 def generate(model, processor, pixel_values):
-    generated_ids = model.generate(pixel_values.to(next(model.parameters()).device))
-    generated_texts = processor.batch_decode(generated_ids, skip_special_tokens=True)
+    generated_ids = model.generate(
+        pixel_values.to(next(model.parameters()).device))
+    generated_texts = processor.batch_decode(
+        generated_ids, skip_special_tokens=True)
     return generated_texts
 
 
@@ -28,6 +30,7 @@ def generate_cli(model_path, image_path, continuous, device_name):
 
 
 def load_ocr_model(path, device) -> Tuple[PreTrainedModel, TrOCRProcessor]:
+    import unimernet
     model = VisionEncoderDecoderModel.from_pretrained(path)
     processor = TrOCRProcessor.from_pretrained(path)
     assert isinstance(processor, TrOCRProcessor)
