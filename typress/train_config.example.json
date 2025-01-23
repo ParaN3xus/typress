@@ -2,7 +2,9 @@
     "model": "",
     "dataset": {
         "train": "",
-        "eval": ""
+        "eval": [
+            ""
+        ]
     },
     "params": {
         "epoches": 1,

@@ -1,3 +1,4 @@
+from typing import List
 from tqdm import tqdm
 import torch
 import json
@@ -67,7 +68,7 @@ def train_and_eval(
     model,
     processor,
     train_dataloader: DataLoader,
-    eval_dataloader: DataLoader,
+    eval_dataloaders: List[DataLoader],
     epoches,
     learning_rate,
     eval_step,
@@ -96,7 +97,7 @@ def train_and_eval(
 
         if ((epoch + 1) % eval_step == 0):
             epoch_metrics["valid_cer"] = eval(
-                model, eval_dataloader, device, logger)
+                model, eval_dataloaders, device, logger)
 
         logger.log_metrics(epoch_metrics)
 
@@ -134,14 +135,14 @@ def cli_train(config_path):
 
         train_dataloader: DataLoader = get_dataloader(
             train_data_path, train_batch_size, dataloader_num_workers, processor)
-        eval_dataloader: DataLoader = get_dataloader(
-            eval_data_path, eval_batch_size, dataloader_num_workers, processor)
+        eval_dataloaders: List[DataLoader] = [get_dataloader(
+            path, eval_batch_size, dataloader_num_workers, processor) for path in eval_data_path]
 
         train_and_eval(
             model,
             processor,
             train_dataloader,
-            eval_dataloader,
+            eval_dataloaders,
             epoches,
             learning_rate,
             eval_step,
