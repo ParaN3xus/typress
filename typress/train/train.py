@@ -7,7 +7,12 @@ from .eval import eval
 from .dataset import get_dataloader
 from ..app.model.ocr_model.model import save_model, load_ocr_model
 from torch.utils.data import DataLoader
-
+from torch.nn.parallel import DistributedDataParallel
+from torch.nn import DataParallel
+import os
+import torch.distributed as dist
+from unimernet import UniMERNetTrainImageProcessor
+from transformers import TrOCRProcessor
 
 class Logger:
     def __init__(self, log_file):
@@ -27,13 +32,31 @@ class Logger:
     def close(self):
         self.f.close()
 
+def inner_model(model):
+    match model:
+        case DataParallel() | DistributedDataParallel():
+            return model.module
+        case _ :
+            return model
 
-def train(model, train_dataloader, optimizer, device, logger: Logger, log_step):
+def train(model, train_dataloader, optimizer, device, logger: Logger, log_step, epoch):
     model.train()
     train_loss = 0.0
     batch_count = 0
 
-    prog = tqdm(train_dataloader)
+    if hasattr(train_dataloader.sampler, 'set_epoch'):
+        train_dataloader.sampler.set_epoch(epoch)
+
+    ddp_flag = isinstance(model, DistributedDataParallel)
+    master_flag = True
+    if(ddp_flag):
+        master_flag = dist.get_rank() == 0
+
+    if master_flag:
+        prog = tqdm(train_dataloader)
+    else:
+        prog = train_dataloader
+
     for batch in prog:
         # get the inputs
         for k, v in batch.items():
@@ -42,7 +65,8 @@ def train(model, train_dataloader, optimizer, device, logger: Logger, log_step):
         # forward + backward + optimize
         outputs = model(**batch)
         loss = outputs.loss
-        loss = loss.mean()
+        if not ddp_flag:
+            loss = loss.mean()
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
@@ -50,17 +74,21 @@ def train(model, train_dataloader, optimizer, device, logger: Logger, log_step):
         train_loss += loss.item()
         batch_count += 1
 
-        if batch_count % log_step == 0:
-            metrics = {
-                "step": batch_count,
-                "loss": loss.item(),
-                "avg_loss": train_loss / batch_count,
-                "learning_rate": optimizer.param_groups[0]['lr']
-            }
-            logger.log_metrics(metrics)
+        if master_flag:
+            if batch_count % log_step == 0:
+                metrics = {
+                    "step": batch_count,
+                    "loss": loss.item(),
+                    "avg_loss": train_loss / batch_count,
+                    "learning_rate": optimizer.param_groups[0]['lr']
+                }
+                logger.log_metrics(metrics)
 
-        prog.set_description(desc=f"loss: {loss.item()}")
+            if isinstance(prog, tqdm):
+                prog.set_description(desc=f"loss: {loss.item()}")
 
+
+    train_loss = torch.tensor(train_loss).to(device)
     return train_loss
 
 
@@ -78,28 +106,39 @@ def train_and_eval(
     log_step,
 ):
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
-    model = torch.nn.DataParallel(model)
+
+    ddp_flag = isinstance(model, DistributedDataParallel)
+    master_flag = True
+    if(ddp_flag):
+        master_flag = dist.get_rank() == 0
 
     for epoch in range(epoches):
-        logger.log_metrics({"epoch": epoch, "status": "started"})
+        if master_flag:
+            logger.log_metrics({"epoch": epoch, "status": "started"})
 
         train_loss = train(model, train_dataloader,
-                           optimizer, device, logger, log_step)
+                           optimizer, device, logger, log_step, epoch)
 
-        save_model(f"{save_path}/epoch_{epoch}/", model.module, processor)
+        if ddp_flag:
+            dist.all_reduce(train_loss, op=dist.ReduceOp.SUM)
+            train_loss = train_loss / dist.get_world_size()
 
-        epoch_metrics = {
-            "epoch": epoch,
-            "status": "completed",
-            "train_loss": train_loss / len(train_dataloader),
-            "valid_cer": "didn't eval"
-        }
+        if master_flag:
+            save_model(f"{save_path}/epoch_{epoch}/",
+                    inner_model(model), processor)
 
-        if ((epoch + 1) % eval_step == 0):
-            epoch_metrics["valid_cer"] = eval(
-                model, eval_dataloaders, device, logger)
+            epoch_metrics = {
+                "epoch": epoch,
+                "status": "completed",
+                "train_loss": train_loss.item() / len(train_dataloader),
+                "valid_cer": "didn't eval"
+            }
 
-        logger.log_metrics(epoch_metrics)
+            if ((epoch + 1) % eval_step == 0):
+                epoch_metrics["valid_cer"] = eval(
+                    model, eval_dataloaders, device, logger)
+
+            logger.log_metrics(epoch_metrics)
 
 
 def cli_train(config_path):
@@ -118,14 +157,26 @@ def cli_train(config_path):
     eval_batch_size = config["params"]["eval_batch_size"]
     eval_step = config["params"]["eval_step"]
     dataloader_num_workers = config["params"]["dataloader_num_workers"]
-    save_path = config["model"]
+    save_path = os.path.join(config["model"], f"{datetime.now()}")
     log_file = config["logging"]["path"]
     log_step = config["logging"]["log_step"]
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    dist_mode = config["dist"]["mode"]
 
     logger = Logger(log_file)
     try:
         logger.log_config(config)
+
+        match dist_mode:
+            case None | "dp":
+                device = torch.device(f"cuda" if torch.cuda.is_available() else "cpu")
+            case "ddp":
+                local_rank = int(os.environ["LOCAL_RANK"])
+                torch.cuda.set_device(local_rank)
+                dist.init_process_group(backend="nccl")
+                dist.barrier()
+                device = torch.device(f"cuda:{local_rank}" if torch.cuda.is_available() else "cpu")
+            case _:
+                raise Exception("Invalid distribute mode")
 
         model, processor = load_ocr_model(model_path, device)
 
@@ -133,10 +184,20 @@ def cli_train(config_path):
             for param in model.encoder.parameters():
                 param.requires_grad = False
 
+        match dist_mode:
+            case "dp":
+                model = DataParallel(model)
+            case "ddp":
+                model = DistributedDataParallel(model,
+                                     device_ids=[local_rank],
+                                     find_unused_parameters=True)
+            case _:
+                pass
+
         train_dataloader: DataLoader = get_dataloader(
-            train_data_path, train_batch_size, dataloader_num_workers, processor)
+            train_data_path, train_batch_size, dataloader_num_workers, processor, True, dist_mode)
         eval_dataloaders: List[DataLoader] = [get_dataloader(
-            path, eval_batch_size, dataloader_num_workers, processor) for path in eval_data_path]
+            path, eval_batch_size, dataloader_num_workers, processor, False, dist_mode) for path in eval_data_path]
 
         train_and_eval(
             model,
@@ -151,5 +212,10 @@ def cli_train(config_path):
             logger,
             log_step,
         )
+    except KeyboardInterrupt:
+        save_model(f"{save_path}/interrupted/",
+            inner_model(model), processor)
     finally:
+        if dist_mode == "ddp":
+            dist.destroy_process_group()
         logger.close()

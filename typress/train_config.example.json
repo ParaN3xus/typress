@@ -1,22 +1,25 @@
 {
     "model": "",
     "dataset": {
-        "train": "",
+        "train": "xxx.csv",
         "eval": [
-            ""
+            "xxx.csv"
         ]
     },
     "params": {
-        "epoches": 1,
+        "epoches": 8,
         "learning_rate": 5e-5,
         "freeze_encoder": false,
         "train_batch_size": 8,
         "eval_batch_size": 8,
         "eval_step": 2,
-        "dataloader_num_workers": 32
+        "dataloader_num_workers": 16
+    },
+    "dist": {
+        "mode": "ddp"
     },
     "logging": {
-        "path": "train.log",
+        "path": "xxx.log",
         "log_step": 16
     }
 }

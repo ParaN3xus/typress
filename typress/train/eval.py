@@ -3,6 +3,7 @@ from tqdm import tqdm
 import torch
 import evaluate
 from torch.utils.data import DataLoader
+from torch.nn.parallel import DistributedDataParallel
 
 cer_metric = evaluate.load("cer")
 
@@ -23,11 +24,13 @@ def eval(model, eval_dataloaders: List[DataLoader], device, logger):
     logger.log_metrics({"status": "evaluation_started"})
     final_cer = []
 
+    inner_model = model.module if isinstance(model, torch.nn.DataParallel) or isinstance(model, DistributedDataParallel) else model
+
     for i, eval_dataloader in enumerate(eval_dataloaders):
         valid_cer = 0.0
         with torch.no_grad():
             for batch in tqdm(eval_dataloader):
-                outputs = model.module.generate(
+                outputs = inner_model.generate(
                     batch["pixel_values"].to(device))
                 outputs.to(device)
 
@@ -46,4 +49,4 @@ def eval(model, eval_dataloaders: List[DataLoader], device, logger):
         "final_cers": final_cer,
     })
 
-    return valid_cer
+    return final_cer

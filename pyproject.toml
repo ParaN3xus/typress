@@ -20,6 +20,8 @@ dependencies = [
     "evaluate>=0.4.3",
     "typst>=0.12.2",
     "my-unimernet",
+    "albumentations>=2.0.2",
+    "numpy<2.0.0",
 ]
 
 [dependency-groups]
@@ -27,6 +29,7 @@ dev = [
     "ipykernel>=6.29.5",
     "ipywidgets>=8.1.5",
     "jiwer>=3.0.5",
+    "matplotlib>=3.10.0",
 ]
 
 [tool.uv.sources]
