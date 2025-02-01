@@ -11,8 +11,8 @@ from torch.nn.parallel import DistributedDataParallel
 from torch.nn import DataParallel
 import os
 import torch.distributed as dist
-from unimernet import UniMERNetTrainImageProcessor
-from transformers import TrOCRProcessor
+import math
+from torch.optim.lr_scheduler import LambdaLR
 
 class Logger:
     def __init__(self, log_file):
@@ -32,6 +32,14 @@ class Logger:
     def close(self):
         self.f.close()
 
+class NoScheduler:
+    def __init__(self):
+        pass
+
+    def step(self):
+        pass 
+
+
 def inner_model(model):
     match model:
         case DataParallel() | DistributedDataParallel():
@@ -39,7 +47,24 @@ def inner_model(model):
         case _ :
             return model
 
-def train(model, train_dataloader, optimizer, device, logger: Logger, log_step, epoch):
+def get_linear_warmup_cosine_lr_scheduler(
+    optimizer,
+    num_training_steps,
+    warmup_steps,
+    init_lr,
+    min_lr,
+    warmup_lr
+):
+    def lr_lambda(current_step):
+        if current_step < warmup_steps:
+            return warmup_lr + (init_lr - warmup_lr) * current_step / warmup_steps
+        
+        progress = float(current_step - warmup_steps) / float(max(1, num_training_steps - warmup_steps))
+        return max(min_lr, min_lr + (init_lr - min_lr) * 0.5 * (1.0 + math.cos(math.pi * progress)))
+    
+    return LambdaLR(optimizer, lr_lambda)
+
+def train(model, train_dataloader, optimizer, lr_scheduler, device, logger: Logger, log_step, epoch):
     model.train()
     train_loss = 0.0
     batch_count = 0
@@ -71,6 +96,8 @@ def train(model, train_dataloader, optimizer, device, logger: Logger, log_step, 
         optimizer.step()
         optimizer.zero_grad()
 
+        lr_scheduler.step()
+
         train_loss += loss.item()
         batch_count += 1
 
@@ -98,14 +125,36 @@ def train_and_eval(
     train_dataloader: DataLoader,
     eval_dataloaders: List[DataLoader],
     epoches,
-    learning_rate,
+    scheduler_conf,
     eval_step,
     save_path,
     device,
     logger: Logger,
     log_step,
 ):
-    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+    match scheduler_conf["mode"]:
+        case "const_lr":
+            optimizer = torch.optim.AdamW(model.parameters(), lr=scheduler_conf["lr"])
+
+            lr_scheduler = NoScheduler()
+        case "linear_warmup_cosine_lr":
+            optimizer = torch.optim.AdamW(
+                model.parameters(),
+                lr=scheduler_conf["init_lr"],
+                weight_decay=scheduler_conf["weight_decay"]
+            )
+            
+            num_training_steps = len(train_dataloader) * epoches
+            
+            lr_scheduler = get_linear_warmup_cosine_lr_scheduler(
+                optimizer,
+                num_training_steps,
+                scheduler_conf["warmup_steps"],
+                scheduler_conf["init_lr"],
+                scheduler_conf["min_lr"],
+                scheduler_conf["warmup_lr"]
+            )
+
 
     ddp_flag = isinstance(model, DistributedDataParallel)
     master_flag = True
@@ -117,7 +166,7 @@ def train_and_eval(
             logger.log_metrics({"epoch": epoch, "status": "started"})
 
         train_loss = train(model, train_dataloader,
-                           optimizer, device, logger, log_step, epoch)
+                           optimizer, lr_scheduler, device, logger, log_step, epoch)
 
         if ddp_flag:
             dist.all_reduce(train_loss, op=dist.ReduceOp.SUM)
@@ -151,7 +200,7 @@ def cli_train(config_path):
     train_data_path = config["dataset"]["train"]
     eval_data_path = config["dataset"]["eval"]
     epoches = config["params"]["epoches"]
-    learning_rate = config["params"]["learning_rate"]
+    scheduler = config["params"]["scheduler"]
     freeze_encoder = config["params"]["freeze_encoder"]
     train_batch_size = config["params"]["train_batch_size"]
     eval_batch_size = config["params"]["eval_batch_size"]
@@ -205,7 +254,7 @@ def cli_train(config_path):
             train_dataloader,
             eval_dataloaders,
             epoches,
-            learning_rate,
+            scheduler,
             eval_step,
             save_path,
             device,

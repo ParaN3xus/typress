@@ -7,12 +7,19 @@
         ]
     },
     "params": {
-        "epoches": 8,
-        "learning_rate": 5e-5,
+        "epoches": 2,
+        "scheduler": {
+            "mode": "linear_warmup_cosine_lr",
+            "init_lr": 1e-4,
+            "min_lr": 1e-8,
+            "warmup_lr": 1e-5,
+            "warmup_steps": 5000,
+            "weight_decay": 0.05
+        },
         "freeze_encoder": false,
         "train_batch_size": 8,
         "eval_batch_size": 8,
-        "eval_step": 2,
+        "eval_step": 1,
         "dataloader_num_workers": 16
     },
     "dist": {
