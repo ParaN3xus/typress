@@ -1,6 +1,8 @@
 from typing import Tuple
 from transformers import PreTrainedModel, TrOCRProcessor, VisionEncoderDecoderModel
 from PIL import Image
+from io import BytesIO
+import sys
 from ..utils import get_device
 
 
@@ -18,7 +20,10 @@ def generate_cli(model_path, image_path, continuous, device_name):
         if continuous:
             image_path = input("Input image file path: ")
 
-        img = Image.open(image_path).convert("RGB")
+        if image_path == "-":
+            img = Image.open(BytesIO(sys.stdin.buffer.read())).convert("RGB")
+        else:
+            img = Image.open(image_path).convert("RGB")
         pixel_values = processor(images=img, return_tensors="pt").pixel_values
         generated_text = generate(model, processor, pixel_values)
         print(generated_text)
